@@ -34,9 +34,34 @@ a{color:var(--blue)}button,input,select{font:inherit}button{cursor:pointer}.wrap
 @media(max-width:1120px){.control-grid{grid-template-columns:repeat(3,1fr)}.workspace-grid{grid-template-columns:1fr}.sidebar{position:static}.layer-nav{grid-template-columns:repeat(2,1fr)}.stats,.pulse-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:760px){.wrap{width:min(100% - 20px,1480px)}.hero{padding:34px 0 24px}.hero h1{font-size:36px;line-height:1.05}.stats,.pulse-grid,.lens-grid,.source-grid,.owner-board,.method-grid,.definition-grid{grid-template-columns:1fr}.stats{gap:8px}.stat{padding:13px}.stat strong{font-size:25px}.controls{padding:8px 0}.mobile-controls{display:flex;align-items:center;justify-content:space-between;gap:10px}.mobile-result{font-size:12px;color:var(--muted);font-weight:720}.mobile-filter-btn{height:39px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:0 12px;font-weight:800;color:var(--ink)}.control-grid{display:none;grid-template-columns:1fr;margin-top:8px}.controls.filters-open .control-grid{display:grid}.control-grid .search{grid-column:auto}.workspace{padding-top:10px}.sidebar{padding:13px}.sidebar-toggle{display:flex;align-items:center;justify-content:space-between}.sidebar-title>h3{display:none}.sidebar>p,.sidebar .count-key,.sidebar-body{display:none}.sidebar.layers-open>p,.sidebar.layers-open .count-key,.sidebar.layers-open .sidebar-body{display:block}.layer-nav{grid-template-columns:1fr;margin-top:10px}.dist{display:none}.toolbar{align-items:flex-start;flex-direction:column}.toolbar-actions{width:100%}.view-tabs{width:100%;display:grid;grid-template-columns:repeat(4,1fr)}.view-tab{padding:8px 4px}.stack-items,.card-grid{grid-template-columns:1fr}.stack-head{grid-template-columns:36px minmax(0,1fr)}.stack-count{grid-column:2;text-align:left}.detail-grid,.related{grid-template-columns:1fr}.drawer{width:100vw}.drawer-inner{padding:18px}.drawer h2{font-size:27px}.source-note{font-size:12px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+/* Innovation Lab | Shell-inspired visual theme */
+:root{--bg:#f6f6f5;--surface:#fff;--surface-2:#faf9f5;--ink:#252b32;--muted:#636b75;--line:#e6e2dd;--blue:#d51e26;--blue-2:#fff0ed;--green:#25765a;--green-2:#e8f6ee;--amber:#916500;--amber-2:#fff6d7;--red:#d51e26;--red-2:#fff0ed;--shadow:0 12px 34px rgba(40,35,30,.08)}
+body{border-top:6px solid #dd1d21}
+.hero{background:linear-gradient(120deg,#fff 0%,#fffdf4 68%,#fff4d4 100%);border-bottom:1px solid #e9e1d1}
+.hero:before{content:"";display:block;height:5px;background:linear-gradient(90deg,#dd1d21 0 78%,#ffd500 78%);position:absolute;top:0;left:0;right:0}
+.hero{position:relative}
+.eyebrow{background:#fff8d8;border-color:#f3dd89;color:#a51b21}
+.hero h1{letter-spacing:-.045em}
+.btn.primary{background:#dd1d21!important;border-color:#dd1d21!important;color:#fff!important}
+.btn.primary:hover{background:#b9171e!important}
+a:hover{color:#b71920}
+.stat{border-top:3px solid #ffd500}
+.controls{background:rgba(250,249,246,.97)}
+.layer-btn.active,.layer-btn[aria-pressed="true"]{border-color:#dd1d21}
+input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid #e0b900;outline-offset:2px}
+.lab-topbar{background:#fff;border-bottom:1px solid #e8e2d7}
+.lab-topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;flex-wrap:wrap}
+.lab-brand{font-size:15px;font-weight:850;letter-spacing:-.02em;color:#252b32}
+.lab-brand:before{content:"";display:inline-block;background:#dd1d21;width:10px;height:10px;border-radius:3px;margin-right:9px}
+.lab-back{font-size:13px;font-weight:750;color:#b71920;text-decoration:none;border:1px solid #e8d5d1;border-radius:9px;padding:7px 12px;background:#fff}
+.lab-back:hover{background:#fff2e9}
+.lab-disclaimer{font-size:12px;color:#6b6255;padding:12px 0;border-top:1px solid #e9e1d1}
+@media(max-width:760px){.lab-topbar .wrap{padding:10px 0}}
 </style>
 </head>
 <body>
+<nav class="lab-topbar" aria-label="Innovation Lab navigation"><div class="wrap"><span class="lab-brand">Innovation Lab / Quantum Technology Landscape</span><a class="lab-back" href="../">← Back to Innovation Lab</a></div></nav>
 <a class="skip" href="#explore">Skip to ecosystem explorer</a>
 <header class="hero">
   <div class="wrap">
@@ -203,4 +228,5 @@ function handleHash(){if(location.hash.startsWith('#company=')){const id=decodeU
 function exportCSV(){const list=filtered();const headers=['Name','Region','Region group','Primary layer','Participating layers','Organization type','Market status','Current quantum activity','Ownership','Modality','Use cases','Origin','Official website','Evidence label','Evidence URL','Discovery source','Discovery URL'];const rows=[headers,...list.map(c=>[c.name,c.region,c.regionGroup,c.primaryLayer,c.layers.join(' | '),c.orgType,c.status,c.currentQuantumActivity?'Yes':'No',c.ownership,c.modality,c.useCases.join(' | '),c.origin,c.website,c.evidenceLabel,c.evidenceUrl,c.discoverySource,c.discoveryUrl])];const csv=rows.map(r=>r.map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download='quantum_ecosystem_filtered_2026.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 init();
 </script>
+<div class="wrap lab-disclaimer">Shell-inspired prototype design. Not an official Shell publication. Review content before publishing to a public website.</div>
 </body></html>
