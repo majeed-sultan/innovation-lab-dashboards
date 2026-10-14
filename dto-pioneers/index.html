@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DTO Pioneers | Innovation Lab · Synthetic Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#F3F5F8;--panel:#FFFFFF;--ink:#17212B;--muted:#5B6776;--line:#DCE1E8;--soft:#EBEEF3;
+  --both:#1E8A62;--ai:#3F5BD6;--dbx:#C4830E;--none:#AAB3BF;--focus:#3F5BD6;--sel:#E7ECFB;
+  --stage1:#17212B;--stage2:#3F5BD6;--stage3:#6E57C9;--stage4:#1E8A62;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12171D;--panel:#1A2129;--ink:#E7ECF2;--muted:#9AA6B4;--line:#2C3642;--soft:#232C36;
+  --both:#3DBB8A;--ai:#7F95F2;--dbx:#E3A536;--none:#5A6573;--focus:#7F95F2;--sel:#243152;
+  --stage1:#E7ECF2;--stage2:#7F95F2;--stage3:#A48FF0;--stage4:#3DBB8A;}}
+:root[data-theme="dark"]{
+  --bg:#12171D;--panel:#1A2129;--ink:#E7ECF2;--muted:#9AA6B4;--line:#2C3642;--soft:#232C36;
+  --both:#3DBB8A;--ai:#7F95F2;--dbx:#E3A536;--none:#5A6573;--focus:#7F95F2;--sel:#243152;
+  --stage1:#E7ECF2;--stage2:#7F95F2;--stage3:#A48FF0;--stage4:#3DBB8A;}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:15px;line-height:1.45;font-variant-numeric:tabular-nums}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 48px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px;margin-bottom:18px}
+h1{font-size:clamp(24px,3.4vw,34px);font-weight:800;letter-spacing:-.02em;margin:0;line-height:1.1}
+.sub{color:var(--muted);margin:6px 0 0;max-width:62ch}
+.asof{color:var(--muted);font-size:13px;text-align:right}
+.filters{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:10px 0 12px;border-bottom:1px solid var(--line);margin-bottom:22px;display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center}
+.fgroup{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fgroup>span{font-size:13px;color:var(--muted);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:4px;background:var(--soft);padding:3px;border-radius:9px}
+.chip{border:0;background:transparent;color:var(--ink);font:inherit;font-size:13px;padding:5px 10px;border-radius:7px;cursor:pointer;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--panel);font-weight:700;box-shadow:0 0 0 1px var(--line)}
+.chip:disabled{opacity:.4;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.reset{border:1px solid var(--line);background:transparent;color:var(--muted);font:inherit;font-size:13px;padding:5px 10px;border-radius:7px;cursor:pointer;margin-left:auto}
+/* pipeline */
+.pipe{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 22px 18px;margin-bottom:22px}
+.pipehead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+.pipehead h2{margin:0;font-size:19px;font-weight:700;letter-spacing:-.01em}
+.pipehead p{margin:3px 0 0;color:var(--muted);font-size:13.5px;max-width:70ch}
+.mode{display:flex;background:var(--soft);padding:3px;border-radius:10px}
+.mode button{border:0;background:transparent;color:var(--ink);font:inherit;font-size:14px;font-weight:600;padding:7px 14px;border-radius:8px;cursor:pointer}
+.mode button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.stages{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0}
+.stage{padding:0 16px 0 0;position:relative}
+.stage+.stage{padding-left:16px;border-left:1px dashed var(--line)}
+.stage .n{font-size:clamp(34px,5.4vw,58px);font-weight:800;letter-spacing:-.035em;line-height:1}
+.stage .lab{font-weight:700;margin-top:6px;font-size:14.5px}
+.stage .crit{color:var(--muted);font-size:12.5px;margin-top:2px;min-height:2.6em}
+.stage .conv{font-size:13px;margin-top:8px;color:var(--muted)}
+.stage .conv b{color:var(--ink)}
+.track{margin-top:18px;display:flex;flex-direction:column;gap:5px}
+.trow{display:grid;grid-template-columns:130px 1fr 56px;gap:10px;align-items:center;font-size:12.5px;color:var(--muted)}
+.tbar{height:14px;background:var(--soft);border-radius:4px;overflow:hidden}
+.tbar i{display:block;height:100%;border-radius:4px;transition:width .45s cubic-bezier(.2,.7,.2,1)}
+.trow .v{text-align:right;color:var(--ink);font-weight:600}
+.side{margin-top:14px;font-size:13px;color:var(--muted)}
+.side b{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){.tbar i,.seg{transition:none!important}}
+/* panels */
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:18px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;min-width:0}
+.panel h3{margin:0;font-size:16px;font-weight:700}
+.panel .hint{margin:3px 0 14px;color:var(--muted);font-size:13px}
+.c7{grid-column:span 7}.c5{grid-column:span 5}.c12{grid-column:span 12}.c6{grid-column:span 6}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th{font-size:12px;font-weight:600;color:var(--muted);text-align:right;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:bottom}
+th:first-child,td:first-child{text-align:left}
+td{padding:8px;text-align:right;border-bottom:1px solid var(--soft);white-space:nowrap}
+tbody tr.click{cursor:pointer}
+tbody tr.click:hover{background:var(--soft)}
+tbody tr.on{background:var(--sel)}
+tfoot td{font-weight:700;border-top:1px solid var(--line);border-bottom:0}
+td .pct{color:var(--muted);font-size:12px;margin-left:4px}
+.minibar{display:inline-block;width:46px;height:6px;background:var(--soft);border-radius:3px;vertical-align:middle;margin-left:6px;overflow:hidden}
+.minibar i{display:block;height:100%;background:var(--stage2)}
+.zero{color:var(--muted)}
+/* stacked bars */
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted);margin-bottom:12px}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px;background:var(--c)}
+.stack{display:grid;grid-template-columns:128px 1fr 40px;gap:10px;align-items:center;margin-bottom:9px;font-size:13px}
+.stack .bar{display:flex;height:22px;border-radius:5px;overflow:hidden;background:var(--soft)}
+.seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;color:#fff;transition:width .45s cubic-bezier(.2,.7,.2,1);min-width:0;overflow:hidden}
+.seg.none{color:var(--ink)}
+.stack .t{text-align:right;color:var(--muted)}
+/* follow-ups */
+.fu{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.fu>div{border:1px solid var(--line);border-radius:9px;padding:12px 14px}
+.fu .k{font-size:26px;font-weight:800;letter-spacing:-.02em}
+.fu .d{font-weight:600;font-size:13.5px;margin-top:2px}
+.fu .w{color:var(--muted);font-size:12.5px;margin-top:6px}
+footer{margin-top:26px;color:var(--muted);font-size:12.5px;max-width:90ch}
+footer p{margin:4px 0}
+@media (max-width:900px){.c7,.c5,.c6{grid-column:span 12}}
+@media (max-width:640px){
+  .stages{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:18px}
+  .stage:nth-child(3){border-left:0;padding-left:0}
+  .trow{grid-template-columns:96px 1fr 44px}
+  .stack{grid-template-columns:96px 1fr 34px}
+  .reset{margin-left:0}
+  .filters{position:static}
+  .asof{text-align:left}
+}
+
+.ctl{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;justify-content:flex-end}
+.ctl label{font-size:13px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:8px}
+select{font:inherit;font-size:14px;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 30px 6px 10px;appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 15px) 52%,calc(100% - 10px) 52%;background-size:5px 5px;background-repeat:no-repeat;cursor:pointer}
+select:focus-visible,input:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.tog{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink);font-weight:600;cursor:pointer}
+.tog input{width:16px;height:16px;accent-color:var(--focus)}
+.delta{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:middle;letter-spacing:0}
+.delta.up,.delta.down{background:color-mix(in srgb,var(--stage2) 15%,transparent);color:var(--stage2)}
+.delta.flat{background:var(--soft);color:var(--muted)}
+.stage .n .delta{font-size:14px;padding:2px 8px;vertical-align:10px}
+.banner{font-size:13px;color:var(--muted);background:var(--soft);border-radius:8px;padding:8px 12px;margin:-8px 0 18px}
+.banner b{color:var(--ink)}
+.moves{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.moves>div{border:1px solid var(--line);border-radius:9px;padding:10px 12px}
+.moves .k{font-size:24px;font-weight:800}
+.moves .d{font-size:13px;color:var(--muted)}
+.xctl{display:flex;flex-wrap:wrap;gap:10px 16px;margin-bottom:14px}
+.xctl label{font-size:13px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:8px}
+#xTable td.h{position:relative}
+.empty{color:var(--muted);font-size:13.5px;padding:18px 0}
+.kpis{display:flex;flex-wrap:wrap;gap:8px 26px;margin-bottom:14px}
+.kpis div{font-size:13px;color:var(--muted)}
+.kpis b{display:block;font-size:22px;color:var(--ink);font-weight:800}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:0 0 18px}
+.tabs button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:15px;font-weight:700;padding:10px 14px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+[hidden]{display:none!important}
+.ckpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:18px}
+.ckpis>div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.ckpis .v{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.ckpis .l{font-size:13px;font-weight:600;margin-top:4px}
+.ckpis .s{font-size:12px;color:var(--muted);margin-top:2px}
+.cols{display:flex;align-items:flex-end;gap:10px;height:240px;padding:8px 4px 0;border-bottom:1px solid var(--line);position:relative}
+.col{flex:1;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-end;height:100%;min-width:0;position:relative}
+.col .stk{display:flex;flex-direction:column-reverse;border-radius:5px 5px 0 0;overflow:hidden}
+.col .stk i{display:block;width:100%}
+.col.fc .stk{opacity:.55;background-image:repeating-linear-gradient(135deg,transparent 0 5px,rgba(255,255,255,.35) 5px 8px)}
+.col .tot{font-size:11.5px;font-weight:700;text-align:center;margin-bottom:4px;white-space:nowrap}
+.xl{display:flex;gap:10px;padding:6px 4px 0}
+.xl span{flex:1;text-align:center;font-size:12px;color:var(--muted);min-width:0}
+.xl span b{display:block;color:var(--ink);font-weight:600}
+.budget-line{position:absolute;left:0;right:0;border-top:2px dashed var(--muted)}
+.budget-line span{position:absolute;right:0;top:-18px;font-size:11px;color:var(--muted);background:var(--panel);padding:0 4px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:8px;cursor:pointer}
+.btn.primary{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{border-color:transparent;color:var(--muted)}
+.status{font-size:12.5px;color:var(--muted);margin-left:auto}
+.status.dirty{color:var(--dbx);font-weight:700}
+.ed td,.ed th{padding:4px 5px}
+.ed input,.ed select{font:inherit;font-size:13px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:5px 6px;width:100%}
+.ed input.num{text-align:right;width:92px}
+.ed input.nm{min-width:220px}
+.ed select{min-width:96px;appearance:auto;background-image:none;padding-right:6px}
+.ed td.grp{font-weight:700;padding-top:12px;text-align:left}
+.ed .del{border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:16px;padding:2px 6px;border-radius:6px}
+.ed .del:hover{background:var(--soft);color:var(--ink)}
+.mtd{display:flex;align-items:center;gap:4px;justify-content:flex-end;font-weight:500;font-size:11px;margin-top:3px}
+.mtd input{width:auto!important}
+.settings{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center;margin-bottom:14px;font-size:13px}
+.settings label{display:flex;gap:8px;align-items:center;color:var(--muted);font-weight:600}
+.settings input{font:inherit;font-size:13px;width:110px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.note{font-size:12.5px;color:var(--muted);margin-top:10px}
+.warn{font-size:13px;background:color-mix(in srgb,var(--dbx) 14%,transparent);border-radius:8px;padding:8px 12px;margin-bottom:12px}
+#tip{position:fixed;z-index:50;pointer-events:none;max-width:300px;background:var(--ink);color:var(--panel);font-size:12.5px;line-height:1.45;padding:8px 10px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+#tip b{font-weight:700}
+#tip .tchg{opacity:.8}
+#tip .thint{display:block;margin-top:4px;opacity:.65;font-size:11.5px}
+#tip .sw,#pop .sw{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:0}
+#pop{position:fixed;z-index:60;width:min(360px,calc(100vw - 20px));max-height:min(72vh,620px);overflow:auto;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 40px rgba(0,0,0,.22);padding:16px 16px 14px;outline:none}
+#pop h4{margin:0 26px 2px 0;font-size:15px;line-height:1.3}
+#pop h5{margin:12px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+#pop h5 em{font-style:normal;text-transform:none;letter-spacing:0;font-weight:500;margin-left:4px}
+#pop .pm{margin:2px 0 6px;color:var(--muted);font-size:12.5px}
+#pop .big{font-size:28px;font-weight:800;letter-spacing:-.02em;margin:4px 0}
+#pop .big span{font-size:14px;font-weight:600;color:var(--muted);letter-spacing:0}
+#pop .pr{display:grid;grid-template-columns:minmax(0,1fr) auto 70px;gap:8px;font-size:13px;padding:2px 0;border-bottom:1px solid var(--soft)}
+#pop .pr span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#pop .pr em{font-style:normal;color:var(--muted);text-align:right;font-size:12px;white-space:nowrap}
+#pop .mini{display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--soft);margin:4px 0 6px}
+#pop .mini i{display:block;height:100%}
+#pop .pact{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px}
+#pop .pclose{position:absolute;top:8px;right:8px;border:0;background:transparent;color:var(--muted);font-size:20px;line-height:1;cursor:pointer;padding:4px 8px;border-radius:6px}
+#pop .pclose:hover{background:var(--soft);color:var(--ink)}
+[data-tk]{cursor:pointer}
+.seg[data-tk]:hover,.col .stk i[data-tk]:hover{filter:brightness(1.12) saturate(1.1)}
+.stage[data-tk]{border-radius:8px;transition:background .15s}
+.stage[data-tk]:hover{background:var(--soft)}
+.trow[data-tk]:hover .tbar{box-shadow:0 0 0 2px var(--line)}
+td[data-tk]:hover{box-shadow:inset 0 0 0 2px var(--line)}
+tr.hov:hover{background:var(--soft)}
+.moves>div[data-tk]:hover,.fu>div[data-tk]:hover,.ckpis>div[data-tk]:hover,.lnkbox:hover{border-color:var(--muted)}
+.lnk{text-decoration:underline dotted;text-underline-offset:3px}
+.lnkbox{border:1px solid transparent;border-radius:8px;padding:2px 6px;margin:-2px -6px}
+.col[data-tk]:hover .tot{text-decoration:underline}
+.stack span[data-tk]:hover{text-decoration:underline dotted}
+.rowname{cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}
+svg .hit .guide{stroke:transparent}
+svg .hit:hover .guide,svg .hit:focus .guide{stroke:var(--line)}
+svg .hit:hover .dot,svg .hit:focus .dot{r:6}
+svg .hit{outline:none}
+svg .hit:focus-visible .dot{stroke:var(--focus);stroke-width:3}
+button.lg{border:0;background:transparent;font:inherit;font-size:12.5px;color:var(--muted);cursor:pointer;padding:2px 4px;border-radius:5px}
+button.lg::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px;background:var(--c)}
+button.lg[aria-pressed="false"]{opacity:.45;text-decoration:line-through}
+button.lg:hover{background:var(--soft)}
+
+/* Shell-inspired Innovation Lab demonstration theme */
+:root{--bg:#F7F7F5;--panel:#FFFFFF;--ink:#272727;--muted:#62666B;--line:#E5E2DB;--soft:#F5F1E8;--focus:#DD1D21;--sel:#FFF0D8;--stage2:#DD1D21;--stage3:#A65C12;--stage4:#24825B;--ai:#DD1D21;--dbx:#C58C00;--both:#24825B}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#F7F7F5;--panel:#FFFFFF;--ink:#272727;--muted:#62666B;--line:#E5E2DB;--soft:#F5F1E8;--focus:#DD1D21;--sel:#FFF0D8;--stage2:#DD1D21;--stage3:#A65C12;--stage4:#24825B;--ai:#DD1D21;--dbx:#C58C00;--both:#24825B}}
+body{border-top:6px solid #DD1D21}
+.lab-nav{background:#fff;border-bottom:4px solid #FFD500;padding:14px max(20px,calc((100vw - 1180px)/2));display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.lab-brand{font-weight:800;font-size:17px;letter-spacing:-.02em}
+.lab-brand::before{content:'S';display:inline-grid;place-items:center;background:#DD1D21;color:white;width:30px;height:30px;border-radius:9px;margin-right:10px;font-size:17px}
+.lab-back{color:#B71A20;text-decoration:none;font-weight:750;font-size:13px;border:1px solid #F2C6C6;border-radius:8px;padding:7px 11px}
+.lab-back:hover{background:#FFF2F0}
+.demo-pill{display:inline-block;vertical-align:middle;font-size:10px;letter-spacing:.06em;background:#FFF2C2;color:#6E5100;border:1px solid #FFD500;border-radius:999px;padding:5px 9px;margin-left:8px}
+.demo-notice{background:#FFF8DC;border-left:5px solid #FFD500;padding:12px 16px;margin:0 0 22px;border-radius:8px;font-size:13px;color:#5B4D28}
+.pipe{border-top:4px solid #FFD500}.panel{border-radius:13px}.tabs button[aria-selected="true"]{color:#DD1D21;border-bottom-color:#DD1D21}.chip[aria-pressed="true"]{box-shadow:0 0 0 1px #DD1D21}.btn.primary{background:#DD1D21;color:white;border-color:#DD1D21}.mode button[aria-pressed="true"]{background:#DD1D21;color:white}
+@media(max-width:640px){.lab-nav{padding:12px 20px}.demo-pill{margin:8px 0 0}}
+</style>
+</head>
+<body>
+<div class="lab-nav"><span class="lab-brand">Innovation Lab · DTO Pioneers</span><a class="lab-back" href="../">← Back to Innovation Lab</a></div>
+<div class="wrap">
+<div class="demo-notice"><strong>Public synthetic demonstration.</strong> Every programme record, usage figure, cost amount and resource label in this dashboard is illustrative. This page is not an official Shell publication.</div>
+<header>
+  <div>
+    <h1>DTO Pioneers programme tracker <span class="demo-pill">SYNTHETIC DEMO</span></h1>
+    <p class="sub">Synthetic demonstration of programme progression, sandbox access, vouchers, certification and hackathon eligibility. No real employee records.</p>
+  </div>
+  <div class="ctl">
+    <label for="snap">Data as of
+      <select id="snap">
+        <option value="new">13 Oct 2026 (current build)</option>
+        <option value="old">30 Sep 2026 (last build)</option>
+      </select>
+    </label>
+    <label class="tog" for="cmp"><input type="checkbox" id="cmp"> <span id="cmpLab">Show change since 30 Sep</span></label>
+  </div>
+</header>
+<nav class="tabs" role="tablist" aria-label="Dashboard sections">
+  <button type="button" role="tab" data-tab="prog" aria-selected="true">Programme</button>
+  <button type="button" role="tab" data-tab="cost" aria-selected="false">Costs</button>
+</nav>
+<div id="viewProg">
+<div class="banner" id="banner"></div>
+
+<div class="filters" role="group" aria-label="Filters">
+  <div class="fgroup"><span id="lLoc">Location</span><div class="chips" data-f="loc" aria-labelledby="lLoc"></div></div>
+  <div class="fgroup"><span id="lTeam">Team</span><div class="chips" data-f="team" aria-labelledby="lTeam"></div></div>
+  <div class="fgroup"><span id="lTrack">Track chosen</span><div class="chips" data-f="track" aria-labelledby="lTrack"></div></div>
+  <button class="reset" id="reset" type="button">Clear filters</button>
+</div>
+
+<section class="pipe" aria-labelledby="pipeTitle">
+  <div class="pipehead">
+    <div>
+      <h2 id="pipeTitle">Programme progress</h2>
+      <p id="pipeDesc"></p>
+    </div>
+    <div class="mode" role="group" aria-label="View">
+      <button type="button" data-mode="prog" aria-pressed="true">Programme</button>
+      <button type="button" data-mode="hack" aria-pressed="false">Hackathon eligibility</button>
+    </div>
+  </div>
+  <div class="stages" id="stages"></div>
+  <div class="track" id="trackbars" aria-hidden="true"></div>
+  <div class="side" id="side"></div>
+</section>
+
+<div class="grid">
+  <section class="panel c12">
+    <h3>What changed between builds</h3>
+    <p class="hint">Sign-ups whose sandbox access changed from 30 Sep to 13 Oct 2026, for the current filters.</p>
+    <div class="moves" id="moves"></div>
+  </section>
+
+  <section class="panel c7">
+    <h3>By location</h3>
+    <p class="hint">Select a location name to filter the dashboard. Hover over or select a number for details.</p>
+    <div class="scroll"><table id="locTable"></table></div>
+  </section>
+  <section class="panel c5">
+    <h3>Sandbox access by location</h3>
+    <p class="hint">Share of sign-ups with access to each sandbox. Hover over or select a bar section for details.</p>
+    <div class="legend" id="sbLegend"></div>
+    <div id="sbBars"></div>
+  </section>
+
+  <section class="panel c12">
+    <h3>AI Foundry usage</h3>
+    <p class="hint">Operations are the calls each person has made in the AI Foundry sandbox. Sign-ups only.</p>
+    <div id="usage"></div>
+  </section>
+
+  <section class="panel c12">
+    <h3>By certificate track</h3>
+    <p class="hint">Track as chosen in the sign-up form. Each stage counts people from the stage before it.</p>
+    <div class="scroll"><table id="trackTable"></table></div>
+  </section>
+
+  <section class="panel c12">
+    <h3>Explore the data</h3>
+    <p class="hint">Build your own cross-table. It follows the date, filters and view chosen above.</p>
+    <div class="xctl">
+      <label for="xr">Rows <select id="xr"></select></label>
+      <label for="xc">Columns <select id="xc"></select></label>
+      <label for="xv">Show <select id="xv"><option value="n">Number of people</option><option value="row">% of row</option><option value="tot">% of total</option></select></label>
+    </div>
+    <div class="scroll"><table id="xTable"></table></div>
+  </section>
+
+  <section class="panel c12">
+    <h3>Who needs a nudge</h3>
+    <p class="hint">Counts for the current date and filters. Demonstration counts only; no employee-level workbook is included.</p>
+    <div class="fu" id="fu"></div>
+  </section>
+
+  <section class="panel c6">
+    <h3>Voucher requests by status</h3>
+    <p class="hint">Count of requests (one person can have several). Voucher data as of 30 Sep 2026 in both builds.</p>
+    <div class="scroll"><table id="reqTable"></table></div>
+  </section>
+  <section class="panel c6">
+    <h3>Voucher mix and certification</h3>
+    <p class="hint">People with at least one voucher request.</p>
+    <div class="legend" id="vLegend"></div>
+    <div id="vBars"></div>
+  </section>
+</div>
+
+<footer id="foot"></footer>
+</div>
+<div id="viewCost" hidden>
+  <div class="ckpis" id="cKpis"></div>
+  <div class="grid">
+    <section class="panel c7">
+      <h3>Monthly cost</h3>
+      <p class="hint" id="cMonthHint">Actual spend by sandbox. Shaded columns are forecasts.</p>
+      <div class="legend" id="cLegend"></div>
+      <div class="cols" id="cCols" role="img" aria-label="Monthly cost by sandbox"></div>
+      <div class="xl" id="cXl"></div>
+    </section>
+    <section class="panel c5">
+      <h3>Cumulative spend</h3>
+      <p class="hint" id="cCumHint">Running total, with forecast to the end of the year. Hover over a month for details.</p>
+      <div id="cCum"></div>
+    </section>
+    <section class="panel c12">
+      <h3>Cost per logged-on user</h3>
+      <p class="hint">Sandbox cost divided by the number of logged-on users that month. Support cost is shown separately. Select a month for its full breakdown.</p>
+      <div class="scroll"><table id="cSummary"></table></div>
+    </section>
+    <section class="panel c12">
+      <h3>Edit cost data</h3>
+      <p class="hint" id="cEditHint">Change any value, add resource groups, user counts or months, then save.</p>
+      <div id="cWarn"></div>
+      <div class="settings">
+        <label for="cMethod">Forecast method
+          <select id="cMethod">
+            <option value="avg3">Average of last 3 complete months</option>
+            <option value="last">Same as last complete month</option>
+            <option value="manual">Enter forecast manually</option>
+          </select>
+        </label>
+        <label for="cBudget">Programme budget (€) <input id="cBudget" type="text" inputmode="decimal" placeholder="Not set"></label>
+      </div>
+      <div class="toolbar">
+        <button class="btn" type="button" id="cAddCost">+ Cost line</button>
+        <button class="btn" type="button" id="cAddUsers">+ User count line</button>
+        <button class="btn" type="button" id="cAddMonth">+ Month</button>
+        <button class="btn ghost" type="button" id="cDelMonth">Remove last month</button>
+        <button class="btn ghost" type="button" id="cExportCsv">Export CSV</button>
+        <button class="btn ghost" type="button" id="cExportJson">Export data file</button>
+        <button class="btn ghost" type="button" id="cImport">Import data file</button>
+        <input type="file" id="cFile" accept=".json,application/json" hidden>
+        <span class="status" id="cStatus" role="status" aria-live="polite"></span>
+        <button class="btn ghost" type="button" id="cRevert">Undo changes</button>
+        <button class="btn primary" type="button" id="cSave">Save</button>
+      </div>
+      <div class="scroll"><table class="ed" id="cEditor"></table></div>
+      <p class="note" id="cNote"></p>
+    </section>
+  </div>
+</div>
+</div>
+
+<div id="tip" role="tooltip" hidden></div>
+<div id="pop" role="dialog" aria-label="Details" tabindex="-1" hidden></div>
+<script>
+const DATA={"s":[[2,0,1,3,3,0,0,0],[0,0,2,3,3,0,0,0],[0,0,0,3,3,2,0,0],[1,0,0,1,1,0,0,0],[0,0,0,3,3,0,0,0],[3,1,2,0,0,2,3,142],[2,1,0,0,0,0,0,0],[2,1,0,3,3,0,0,0],[2,0,0,3,3,0,0,0],[0,1,0,2,2,2,0,0],[0,0,2,2,2,0,0,0],[0,1,2,2,2,1,0,0],[0,1,1,1,1,2,1,167],[0,1,2,0,0,0,0,88],[0,0,2,2,2,0,0,0],[0,1,2,1,1,1,2,0],[0,0,0,3,3,0,0,0],[0,0,0,2,2,0,0,0],[3,0,2,3,3,0,0,0],[1,0,2,1,1,1,0,1874],[2,0,0,1,1,2,1,34],[3,0,0,3,3,0,0,0],[0,1,1,1,1,0,0,11],[0,1,2,1,1,1,0,450],[0,0,2,0,0,0,0,720],[1,0,1,3,3,0,0,0],[0,0,1,3,3,0,0,0],[2,0,0,1,1,2,0,0],[0,0,0,1,1,0,0,1641],[3,0,1,0,0,0,0,0],[0,1,0,1,1,2,0,38],[1,1,1,3,3,0,0,0],[0,0,0,2,2,2,0,0],[0,1,0,0,2,0,0,0],[0,0,1,1,1,0,0,0],[2,0,0,2,3,0,0,0],[0,1,2,1,1,0,0,69],[3,1,2,1,1,2,0,0],[0,1,0,1,1,0,0,0],[0,0,1,0,0,0,0,1001],[0,0,0,2,2,0,0,0],[4,1,1,3,3,0,0,0],[2,0,2,1,1,2,0,41],[0,1,1,1,1,0,0,8],[0,0,1,3,3,0,0,0],[0,0,2,3,1,2,0,1694],[2,0,0,3,3,0,0,0],[2,0,2,3,3,0,0,0],[0,0,2,1,1,3,0,0],[0,0,0,0,1,0,0,5],[0,1,0,1,1,3,0,29],[3,0,0,3,3,0,0,0],[0,0,1,1,1,0,0,116],[0,0,2,1,0,0,0,1845],[0,1,1,2,2,2,0,0],[0,0,1,2,2,1,0,0],[0,0,0,3,3,0,0,0],[0,0,0,1,3,0,0,0],[0,0,1,3,3,0,0,0],[0,1,0,3,0,0,0,0],[1,0,2,3,3,0,0,0],[2,0,0,2,2,0,0,0],[1,0,1,1,1,2,0,61],[0,0,1,1,1,0,0,244],[0,0,1,3,2,0,0,0],[0,0,2,3,3,0,0,0],[0,0,1,2,2,0,0,0],[3,0,0,1,1,2,0,18],[1,0,2,2,2,0,0,0],[0,1,0,2,2,0,0,0],[0,1,2,2,2,0,0,0],[3,1,1,2,2,2,0,0],[4,1,2,1,1,0,0,32],[1,0,0,3,3,0,0,0],[1,1,2,1,1,3,0,27],[0,1,1,0,0,2,0,0],[0,0,0,2,2,0,0,0],[2,1,2,3,2,1,0,0],[2,1,1,3,3,0,0,0],[0,1,2,0,0,2,0,1215],[2,0,0,0,0,1,0,186],[2,0,0,0,0,2,0,431],[1,0,1,3,3,2,0,0],[0,0,2,0,0,3,0,0],[1,0,2,2,2,0,0,0],[1,0,0,1,1,0,0,172],[0,0,1,3,3,0,0,0],[0,1,0,1,1,0,0,1057],[3,0,0,0,2,0,0,0],[3,0,0,3,3,2,0,0],[1,0,2,0,0,2,0,47],[2,0,0,3,3,0,0,0],[1,0,1,1,1,0,0,974],[2,1,2,1,1,0,0,0],[0,0,0,0,1,1,2,0],[0,1,1,1,1,1,0,1683],[1,1,1,0,0,2,0,52],[2,1,0,2,2,1,0,0],[3,1,1,3,3,0,0,0],[2,1,0,3,3,2,0,0],[2,0,0,1,1,0,0,43],[0,1,2,3,3,0,0,0],[3,1,1,2,2,0,0,0],[0,0,0,0,0,0,0,0],[3,0,1,3,3,0,0,0],[0,0,1,0,0,0,0,0],[0,1,2,3,3,0,0,0],[4,1,2,1,1,0,0,0],[0,0,1,1,2,0,0,0],[0,0,2,1,1,0,0,30],[0,0,0,1,1,0,0,0],[1,1,0,1,1,0,0,0],[0,0,2,1,1,0,0,16],[0,0,1,2,3,0,0,0],[0,0,2,3,3,0,0,0],[0,1,0,0,0,3,2,0],[4,0,2,2,2,0,0,0],[0,0,1,3,3,0,0,0],[0,0,1,3,3,0,0,0],[0,1,0,3,3,0,0,0],[2,0,1,1,1,2,0,134],[3,0,1,3,3,0,0,0],[0,0,1,0,0,0,0,50],[0,1,1,3,3,0,0,0],[3,1,0,1,1,2,0,0],[3,0,1,2,2,2,0,0],[3,0,0,3,3,1,0,0],[2,1,0,3,3,0,0,0],[0,1,1,0,0,0,0,0],[3,0,1,3,3,0,0,0],[0,1,2,3,3,0,0,0],[0,0,0,2,2,3,2,0],[0,0,2,3,3,0,0,0],[0,0,2,3,0,2,0,5],[3,1,0,2,2,0,0,0],[0,1,0,3,3,0,0,0],[0,0,0,2,2,0,0,0],[4,1,0,1,3,0,0,0],[0,1,2,3,3,0,0,0],[1,1,1,0,0,0,0,921],[1,1,0,3,3,0,0,0],[0,0,0,3,3,0,0,0],[0,1,2,0,0,0,0,0],[0,0,1,3,3,0,0,0],[2,0,1,2,2,0,0,0],[1,0,1,2,1,1,0,161],[0,0,2,3,3,0,0,0],[0,0,0,0,0,0,0,1379],[0,0,0,0,0,2,2,0],[4,0,2,1,1,0,0,18],[0,0,1,2,2,1,0,0],[1,0,1,0,1,2,3,0],[0,0,0,3,3,0,0,0],[0,1,1,3,3,2,2,0],[0,0,0,2,2,0,0,0],[0,0,1,3,3,0,0,0],[0,0,2,3,3,0,0,0],[0,0,2,3,3,0,0,0],[0,0,0,0,0,0,0,722],[0,1,1,3,3,0,0,0],[1,0,1,1,1,2,0,178],[0,0,2,1,0,2,0,881],[0,1,2,2,2,0,0,0],[2,0,2,3,3,0,0,0],[1,0,0,2,2,3,2,0],[4,1,0,2,2,3,0,0],[2,0,0,3,3,0,0,0],[1,1,2,3,3,0,0,0],[0,0,0,2,2,2,0,0],[0,0,1,2,2,1,1,0],[0,0,2,1,1,2,2,0],[0,1,2,1,1,3,0,26],[2,1,1,3,3,0,0,0],[0,0,1,3,3,0,0,0],[4,0,0,1,1,3,0,206],[2,0,0,3,3,0,0,0],[0,0,0,3,3,1,0,0],[3,0,0,3,3,0,0,0],[4,1,2,1,1,0,0,0],[0,1,2,2,2,0,0,0],[0,1,1,1,1,0,0,102],[0,0,1,0,0,1,2,79],[0,1,0,1,1,0,0,139],[1,1,1,3,3,0,0,0],[0,0,1,3,0,0,0,31],[2,0,1,2,3,0,0,0],[0,0,0,3,3,0,0,0],[3,1,0,0,0,0,0,204],[0,0,0,2,2,0,0,0],[0,0,2,3,3,0,0,0],[0,0,2,1,2,0,0,0],[0,0,0,0,3,0,0,0],[2,1,1,3,3,0,0,0],[2,1,0,3,1,0,0,0],[0,0,1,2,2,2,0,0],[1,0,1,3,3,0,0,0],[0,0,0,2,2,0,0,0],[0,0,2,3,3,0,0,0],[0,1,1,2,2,2,2,0],[1,0,0,3,3,3,0,0],[2,0,1,3,3,0,0,0],[0,1,2,2,2,0,0,0],[0,0,0,3,3,0,0,0],[3,1,2,3,3,0,0,0],[0,0,2,0,1,0,0,0],[0,1,0,1,1,3,0,3],[2,1,1,3,3,3,0,0],[0,1,2,3,3,0,0,0],[1,1,1,2,2,0,0,0],[0,1,2,0,0,2,1,1076],[0,1,2,3,3,0,0,0],[0,0,0,3,3,0,0,0],[1,0,1,1,1,0,0,0],[0,0,0,3,3,0,0,0],[0,0,0,3,3,0,0,0],[1,0,0,3,3,0,0,0],[0,1,1,1,1,2,1,2134],[0,0,1,3,3,0,0,0],[0,1,0,3,3,0,0,0],[0,1,0,1,1,1,0,147],[0,0,2,3,3,0,0,0],[3,0,0,2,1,0,0,961],[2,1,0,3,3,0,0,0],[0,1,0,3,3,0,0,0],[1,0,1,1,1,0,0,0],[0,0,1,2,2,0,0,0],[0,0,1,1,1,0,0,0],[0,1,2,3,3,0,0,0],[0,0,0,3,3,0,0,0],[2,0,0,3,3,0,0,0],[0,0,0,1,1,0,0,108],[2,1,1,0,0,0,0,148],[0,1,2,0,0,0,0,0],[3,1,2,2,2,1,0,0],[0,0,2,0,0,1,2,99],[0,0,0,3,3,0,0,0],[1,0,2,1,2,2,0,0],[4,0,1,0,0,3,0,148],[2,0,2,1,1,0,0,11],[0,1,0,3,0,0,0,17],[3,0,0,1,0,0,0,0],[4,0,1,0,0,0,0,9],[3,0,1,1,1,0,0,227],[3,0,0,3,3,0,0,0],[0,1,1,3,3,0,0,0],[0,0,0,1,1,2,1,0],[2,0,0,1,1,0,0,40],[0,0,2,3,3,2,0,0],[0,1,1,1,1,0,0,0],[2,0,0,0,0,0,0,48],[1,1,1,2,2,1,0,0],[0,1,0,3,1,0,0,0],[0,0,0,3,3,0,0,0],[0,0,2,0,0,0,0,1741],[2,1,2,0,0,0,0,0],[4,1,2,1,1,1,0,0],[0,0,2,3,3,0,0,0],[0,1,1,2,2,3,0,0],[4,0,0,1,1,0,0,0],[1,0,0,2,2,2,0,0],[0,1,2,1,1,2,0,47],[3,0,0,2,2,0,0,0],[2,1,0,0,0,0,0,0],[0,0,0,1,1,0,0,36],[3,0,0,3,3,0,0,0],[2,1,0,1,1,0,0,2],[3,0,0,3,3,0,0,0],[0,1,0,0,0,0,0,0],[2,0,0,1,1,2,0,239],[0,0,2,2,2,2,0,0],[0,0,2,1,1,2,0,0],[0,0,1,3,3,0,0,0],[1,0,1,3,3,0,0,0],[0,0,0,1,1,0,0,0],[3,0,2,3,2,2,0,0],[2,0,2,0,0,0,0,235],[0,0,0,1,3,0,0,0],[0,1,0,2,2,3,2,0],[0,1,2,3,3,0,0,0],[0,1,0,0,0,0,0,1478],[0,1,0,3,0,0,0,157],[1,0,0,3,3,0,0,0],[0,0,0,1,1,1,0,511],[1,1,2,0,0,0,0,899],[0,0,1,3,0,0,0,7],[3,0,2,3,3,0,0,0],[0,1,0,1,0,3,0,44],[0,0,0,2,2,0,0,0],[0,1,1,1,1,2,0,2005],[0,0,1,2,2,0,0,0],[0,1,2,2,2,2,2,0],[0,0,1,0,0,0,0,118],[0,0,2,3,1,0,0,199],[0,0,1,3,3,0,0,0],[0,1,1,2,2,0,0,0],[3,1,2,3,3,0,0,0],[0,0,1,3,3,0,0,0],[1,1,2,1,1,0,0,2],[4,0,2,2,2,0,0,0],[0,0,2,3,3,0,0,0],[1,1,2,3,3,0,0,0],[0,1,2,1,0,1,0,247],[3,0,0,3,3,0,0,0],[0,0,1,0,0,0,0,503],[0,1,0,2,2,0,0,0],[1,0,2,2,2,0,0,0],[0,1,1,2,2,0,0,0],[0,0,1,1,0,3,0,26],[0,0,0,2,2,0,0,0],[0,0,2,1,1,0,0,1501],[0,0,2,1,1,0,0,1],[0,0,1,0,0,0,0,270],[0,1,0,3,3,0,0,0],[0,1,1,3,3,0,0,0],[0,1,0,1,1,2,0,984],[0,0,0,2,2,0,0,0],[0,0,1,2,2,2,0,0],[4,1,1,3,3,0,0,0],[0,0,0,2,3,0,0,0],[0,0,2,0,0,0,0,613],[2,0,1,0,0,2,0,2109],[0,0,2,3,3,0,0,0],[3,0,0,3,3,0,0,0],[0,1,2,0,3,0,0,0],[1,0,1,1,1,0,0,0],[1,0,2,3,3,0,0,0],[0,1,1,3,3,0,0,0],[0,0,2,1,1,0,0,166],[0,1,0,2,3,0,0,0],[1,0,0,1,1,0,0,905],[2,0,1,1,1,0,0,78],[0,0,1,0,0,2,0,0],[0,1,2,3,1,2,0,0],[1,1,0,1,1,2,0,53],[0,1,0,1,1,0,0,0],[0,0,0,1,1,0,0,0],[0,1,0,3,3,0,0,0],[0,0,2,3,3,0,0,0],[0,0,2,2,2,3,0,0],[0,0,0,2,2,3,0,0],[1,1,2,1,1,0,0,26],[2,0,1,2,2,0,0,0],[0,0,0,3,3,0,0,0],[2,1,1,0,0,0,0,59],[0,1,0,1,1,0,0,1481],[0,1,1,0,0,0,0,0],[0,0,0,3,3,0,0,0],[0,0,0,2,2,0,0,0],[0,0,1,3,3,0,0,0],[3,0,1,2,2,0,0,0],[0,0,0,3,1,0,0,125],[0,0,0,3,3,0,0,0],[0,0,2,1,2,2,0,0],[0,0,1,1,1,2,0,0],[1,1,0,1,0,0,0,1197],[0,0,1,0,0,0,0,0],[0,0,0,3,3,0,0,0],[0,0,0,3,3,0,0,0],[0,0,0,0,0,1,0,0],[2,0,1,3,3,0,0,0],[2,1,0,0,0,0,0,932],[1,0,0,3,1,2,0,0],[2,0,0,1,1,0,0,512],[0,0,2,1,1,0,0,54],[0,1,0,3,3,0,0,0],[0,0,0,3,3,0,0,0],[3,0,0,2,2,0,0,0],[1,1,0,1,0,1,0,0],[1,1,1,3,3,0,0,0],[1,0,1,2,2,3,0,0],[0,0,0,1,1,0,0,6],[1,1,0,0,0,1,0,1074],[2,0,0,1,1,0,0,800],[3,0,2,2,2,1,2,0],[0,0,0,3,3,0,0,0],[0,0,1,0,0,2,1,0],[2,0,0,1,1,1,0,57],[0,0,1,2,2,2,0,0],[0,0,1,2,2,0,0,0],[2,0,1,0,0,0,0,0],[1,1,1,0,0,0,0,783],[1,1,0,1,1,1,2,0],[0,0,1,3,3,0,0,0],[0,0,2,0,3,0,0,0],[0,0,0,1,3,0,0,0],[0,0,1,2,2,0,0,0],[0,0,2,2,2,0,0,0],[0,0,1,2,2,0,0,0],[0,0,0,1,1,0,0,2098],[0,0,0,3,3,0,0,0],[0,0,1,0,0,0,0,889],[0,1,0,1,1,0,0,232],[0,0,1,1,1,0,0,20],[1,0,1,3,3,0,0,0],[0,1,2,1,1,1,0,0],[1,0,1,1,1,1,0,476],[0,0,0,3,3,0,0,0],[1,0,2,1,1,2,0,542],[3,0,1,1,1,1,3,163],[2,1,0,1,1,0,0,10],[2,0,1,0,0,1,0,125],[0,0,1,1,1,0,0,2163],[0,0,0,2,2,1,0,0],[0,1,2,1,1,0,0,1744],[0,1,2,3,3,0,0,0],[1,1,0,1,1,2,1,2109],[0,1,0,0,0,0,0,1587],[1,0,1,0,0,0,0,201],[4,0,1,3,3,0,0,0],[3,0,2,2,2,1,1,0],[0,0,0,0,0,1,0,253],[0,0,0,1,1,1,2,0],[2,0,0,1,3,3,1,0],[0,0,1,1,1,0,0,228],[0,0,1,3,3,0,0,0],[4,1,0,1,1,3,0,1618],[3,0,1,3,3,0,0,0],[0,1,2,1,1,0,0,38],[0,1,0,1,1,0,0,13],[0,0,1,0,0,2,0,0],[2,0,0,3,3,0,0,0],[2,0,1,3,3,0,0,0],[0,1,1,1,1,1,0,0],[2,0,1,1,1,0,0,127],[0,1,2,2,2,3,3,0],[4,0,2,1,1,1,0,219],[1,1,2,3,3,0,0,0],[1,0,1,3,3,0,0,0],[0,1,0,3,3,0,0,0],[0,0,2,1,1,0,0,107],[0,0,1,3,3,0,0,0],[0,0,1,3,3,0,0,0],[0,0,0,1,1,2,0,68],[0,1,0,1,1,0,0,0],[2,1,1,3,3,3,0,0],[1,1,0,1,1,3,0,963],[2,0,1,3,2,2,2,0],[3,0,1,3,3,0,0,0],[0,0,0,3,3,0,0,0],[1,1,1,3,3,0,0,0],[3,0,0,3,3,0,0,0],[0,0,0,3,3,0,0,0],[1,1,1,0,0,0,0,0],[2,1,0,2,2,2,0,0],[1,1,0,2,2,2,0,0],[2,1,1,1,1,2,0,2],[2,1,1,3,3,0,0,0],[0,0,2,3,3,0,0,0],[0,1,0,1,1,0,0,0],[1,0,1,1,1,1,0,62],[0,0,1,2,2,0,0,0],[0,0,2,3,3,0,0,0],[0,0,0,3,1,0,0,21],[0,0,1,1,1,0,0,45],[3,1,1,2,2,1,2,0],[0,0,0,3,3,3,0,0],[1,0,0,1,1,0,0,1191],[0,1,0,3,3,0,0,0],[0,1,1,1,1,0,0,0],[0,0,2,2,2,1,0,0],[3,1,0,3,3,0,0,0],[0,0,0,1,1,0,0,0],[0,1,1,1,0,1,0,0],[2,1,0,0,0,3,0,8],[0,0,2,1,1,0,0,0],[2,0,2,1,1,0,0,37],[0,0,0,3,3,0,0,0],[0,1,2,1,1,3,0,233],[0,1,2,2,2,0,0,0],[4,0,2,1,1,0,0,0],[3,1,2,3,3,0,0,0],[0,0,1,0,0,1,0,0],[2,0,2,3,3,0,0,0],[4,1,1,0,0,0,0,8],[0,1,1,1,1,0,0,0],[4,1,0,2,2,0,0,0],[1,0,2,1,1,0,0,40],[0,1,0,3,3,0,0,0],[1,0,1,3,3,0,0,0],[0,0,1,3,3,0,0,0]],"r":[[0,1,1,0,0],[0,0,0,0,2],[2,0,0,0,4],[0,0,0,0,4],[0,1,2,0,2],[1,1,0,1,5],[0,0,0,0,2],[1,0,0,0,0],[0,0,1,1,0],[1,0,2,0,4],[1,0,1,1,0],[0,1,1,1,2],[0,0,2,0,4],[0,0,1,1,2],[0,1,1,0,4],[0,1,1,0,0],[3,0,0,1,0],[2,0,2,0,2],[2,1,0,1,1],[0,1,2,1,1],[3,0,2,1,2],[3,0,0,1,3],[0,1,1,1,4],[2,0,2,1,4],[2,0,2,1,0],[0,1,2,1,0],[2,0,2,1,2],[0,0,1,0,4],[1,0,2,0,1],[2,0,0,1,0],[1,0,1,0,0],[2,1,0,0,0],[0,0,2,1,4],[3,0,0,1,0],[0,0,1,1,5],[0,0,1,1,0],[0,0,0,1,2],[0,1,1,0,0],[0,1,1,1,0],[0,1,2,0,2],[3,1,2,1,1],[3,0,0,1,0],[2,1,0,1,0],[0,1,2,1,2],[1,1,2,1,5],[0,1,2,0,0],[0,1,0,1,0],[1,0,1,0,2],[0,1,2,1,0],[3,1,0,1,2],[2,1,0,1,0],[2,0,1,0,2],[0,0,0,1,0],[0,0,0,1,4],[0,1,2,1,4],[2,0,1,1,0],[2,0,1,1,0],[0,0,1,0,5],[4,0,0,0,1],[4,1,1,1,0],[3,0,0,1,0],[1,0,2,1,4],[0,1,0,0,0],[0,1,0,0,3],[3,1,1,0,2],[0,1,0,1,2],[0,0,1,0,5],[0,0,1,1,1],[0,0,0,1,1],[0,0,1,1,2],[0,1,0,0,2],[1,1,0,1,2],[3,0,1,0,0],[4,1,0,0,2],[0,1,1,1,2],[0,0,1,1,0],[0,1,1,0,0],[0,0,1,0,5],[1,1,1,0,0],[0,0,0,0,4],[0,0,0,0,0],[4,1,0,1,2],[4,1,2,0,1],[0,1,1,0,4],[2,0,1,0,2],[0,0,1,1,2],[4,1,1,0,0],[0,0,2,1,0],[2,1,1,1,1],[0,1,0,1,0],[0,0,2,1,0],[2,0,0,0,1],[0,0,1,1,0],[0,0,0,0,0],[0,1,0,1,4]],"m":{"old":{"af":223,"afm":214,"db":168,"dbm":161,"svc":4},"new":{"af":225,"afm":216,"db":177,"dbm":170,"svc":4}}};
+const LOC=['India','United Kingdom','The Netherlands','United States','Business Proximate'];
+const TEAM=['DTO','DTR IDT'];
+const TRACK=['Both','AI-103 only','Databricks only'];
+const SB=['Both sandboxes','AI Foundry only','Databricks only','No access'];
+const SBC=['var(--both)','var(--ai)','var(--dbx)','var(--none)'];
+const MIX=['No voucher','Both vouchers','AI-103 voucher only','Databricks voucher only'];
+const CERT=['Not certified','Both certified','AI-103 certified','Databricks certified'];
+const BAND=['No AI Foundry activity','Under 50','50–249','250–999','1,000+'];
+const BANDC=['var(--none)','#B9C6F5','#8098EC','#4D66DA','#2A3F9E'];
+const STAT=['Voucher shared','Shared, learner completed','Requested from Databricks','Used first voucher, new one due','Exam booked, new voucher after','Waiting for first voucher to be used'];
+const SNAP={new:'13 Oct 2026',old:'30 Sep 2026'};
+// record: [loc, team, track, sandbox 30 Sep, sandbox 13 Oct, voucher mix, certification, AI Foundry operations at 13 Oct]
+const S=DATA.s.map(a=>({loc:a[0],team:a[1],track:a[2],sbo:a[3],sbn:a[4],mix:a[5],cert:a[6],ops:a[7]}));
+const R=DATA.r.map(a=>({loc:a[0],team:a[1],track:a[2],course:a[3],status:a[4]}));
+const st={snap:'new',cmp:false,loc:-1,team:-1,track:-1,mode:'prog',xr:'loc',xc:'sb',xv:'n'};
+
+const other=()=>st.snap==='new'?'old':'new';
+const sbOf=(x,snap)=>(snap||st.snap)==='new'?x.sbn:x.sbo;
+const band=x=>x.ops<=0?0:x.ops<50?1:x.ops<250?2:x.ops<1000?3:4;
+const fmt=n=>n.toLocaleString('en-GB');
+const pct=(a,b)=>b?(a/b*100).toFixed(a/b<.1&&a>0?1:0)+'%':'–';
+const pct1=(a,b)=>b?(a/b*100).toFixed(1)+'%':'–';
+const match=(x,ign={})=>(ign.loc||st.loc<0||x.loc===st.loc)&&(ign.team||st.team<0||x.team===st.team)&&(ign.track||st.mode==='hack'||st.track<0||x.track===st.track);
+function dl(cur,prev){
+  if(!st.cmp)return '';
+  const d=cur-prev, c=d>0?'up':d<0?'down':'flat';
+  return `<span class="delta ${c}" title="Change since ${SNAP[other()]}">${d>0?'+':d<0?'−':'±'}${fmt(Math.abs(d))}</span>`;
+}
+
+/* ---------- interaction layer: tooltips and detail popovers ---------- */
+const TIPS=new Map(); let tipSeq=0;
+function tk(prefix,tip,detail){const id=prefix+':'+(++tipSeq);TIPS.set(id,{tip,detail});return id;}
+function clearTips(prefix){for(const k of [...TIPS.keys()])if(k.startsWith(prefix+':'))TIPS.delete(k);}
+const attr=(id,focus=true)=>` data-tk="${id}"${focus?' tabindex="0"':''}`;
+const medianOf=a=>{if(!a.length)return 0;const s=[...a].sort((x,y)=>x-y),h=s.length>>1;return s.length%2?s[h]:Math.round((s[h-1]+s[h])/2);};
+function chg(cur,prev){const d=cur-prev;return `<span class="tchg">Change vs ${SNAP[other()]}: ${d>0?'+':d<0?'−':'±'}${fmt(Math.abs(d))}</span>`;}
+function mini(vals,colors,labels){const t=vals.reduce((a,b)=>a+b,0)||1;return `<div class="mini" aria-hidden="true">${vals.map((v,i)=>v?`<i style="width:${v/t*100}%;background:${colors[i]}"></i>`:'').join('')}</div>`;}
+function pline(lab,v,tot){return `<div class="pr"><span>${lab}</span><b>${fmt(v)}</b><em>${tot?pct(v,tot):''}</em></div>`;}
+function profile(rows,o={}){
+  const n=rows.length;
+  if(!n)return '<p class="pm">Nobody in this group for the current filters.</p>';
+  const sbv=[0,1,2,3].map(k=>rows.filter(x=>sbOf(x)===k).length);
+  let h=`<h5>Sandbox access, ${SNAP[st.snap]}</h5>${mini(sbv,SBC,SB)}${sbv.map((v,k)=>v?pline(SB[k],v,n):'').join('')}`;
+  if(!o.noTrack)h+=`<h5>Track chosen</h5>${[0,1,2].map(k=>pline(TRACK[k],rows.filter(x=>x.track===k).length,n)).join('')}`;
+  if(!o.noLoc)h+=`<h5>Location</h5>${LOC.map((l,k)=>[l,rows.filter(x=>x.loc===k).length]).filter(a=>a[1]).sort((a,b)=>b[1]-a[1]).map(([l,v])=>pline(l,v,n)).join('')}`;
+  if(!o.noTeam)h+=`<h5>Team</h5>${[0,1].map(k=>pline(TEAM[k],rows.filter(x=>x.team===k).length,n)).join('')}`;
+  h+=`<h5>Vouchers and certification</h5>${pline('Requested a voucher',rows.filter(x=>x.mix>0).length,n)}${pline('Vouchers for both',rows.filter(x=>x.mix===1).length,n)}${pline('Certified (any)',rows.filter(x=>x.cert>0).length,n)}`;
+  if(st.snap==='new'){const u=rows.filter(x=>x.ops>0).map(x=>x.ops);
+    h+=`<h5>AI Foundry usage, 13 Oct</h5>${pline('With activity',u.length,n)}<div class="pr"><span>Median operations</span><b>${u.length?fmt(medianOf(u)):'–'}</b><em></em></div>${pline('Regular users (250+ operations)',u.filter(x=>x>=250).length,n)}`;}
+  return h;
+}
+function detail(title,sub,rows,o={},acts=[]){
+  return `<h4>${title}</h4>${sub?`<p class="pm">${sub}</p>`:''}<div class="big">${fmt(rows.length)} <span>${rows.length===1?'person':'people'}</span></div>${o.extra||''}${profile(rows,o)}${acts.length?`<div class="pact">${acts.map(a=>`<button class="btn" type="button" data-act="${a[0]}" data-arg="${a[1]}">${a[2]}</button>`).join('')}</div>`:''}`;
+}
+const ACTIONS={
+  loc:v=>{st.loc=+v;render();document.querySelector('.filters').scrollIntoView({behavior:'smooth',block:'start'});},
+  track:v=>{st.mode='prog';st.track=+v;render();},
+  team:v=>{st.team=+v;render();},
+};
+const tipEl=document.getElementById('tip'), popEl=document.getElementById('pop');
+let tipFor=null, popReturn=null, popY=0, quietFocus=false;
+function placeTip(x,y){const r=tipEl.getBoundingClientRect();let l=x+14,t=y+16;if(l+r.width>innerWidth-8)l=x-r.width-14;if(l<8)l=8;if(t+r.height>innerHeight-8)t=y-r.height-12;if(t<8)t=8;tipEl.style.left=l+'px';tipEl.style.top=t+'px';}
+function showTip(el,x,y){const d=TIPS.get(el.dataset.tk);if(!d||!d.tip){hideTip();return;}
+  tipEl.innerHTML=(typeof d.tip==='function'?d.tip():d.tip)+(d.detail?'<span class="thint">Click for details</span>':'');tipEl.hidden=false;placeTip(x,y);tipFor=el;}
+function hideTip(){tipEl.hidden=true;tipFor=null;}
+function openPop(d,x,y,el){
+  hideTip();popEl.innerHTML=`<button class="pclose" type="button" aria-label="Close details">×</button>${d.detail()}`;popEl.hidden=false;popReturn=el;popY=scrollY;
+  const r=popEl.getBoundingClientRect();let l=x+12,t=y+12;
+  if(l+r.width>innerWidth-10)l=Math.max(10,x-r.width-12);if(t+r.height>innerHeight-10)t=Math.max(10,innerHeight-r.height-10);
+  popEl.style.left=l+'px';popEl.style.top=t+'px';
+  popEl.querySelector('.pclose').onclick=()=>closePop(true);
+  popEl.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>{const f=ACTIONS[b.dataset.act];closePop(false);f&&f(b.dataset.arg);});
+  popEl.focus({preventScroll:true});
+}
+function closePop(refocus){if(popEl.hidden)return;popEl.hidden=true;
+  if(refocus&&popReturn&&document.contains(popReturn)){quietFocus=true;popReturn.focus({preventScroll:true});quietFocus=false;}popReturn=null;}
+document.addEventListener('pointerover',e=>{if(e.pointerType==='touch')return;const el=e.target.closest('[data-tk]');if(el){if(el!==tipFor)showTip(el,e.clientX,e.clientY);}else if(tipFor)hideTip();});
+document.addEventListener('pointermove',e=>{if(tipFor&&!tipEl.hidden)placeTip(e.clientX,e.clientY);});
+document.addEventListener('focusin',e=>{if(quietFocus)return;const el=e.target.closest&&e.target.closest('[data-tk]');if(el&&el.matches(':focus-visible')){const r=el.getBoundingClientRect();showTip(el,r.left+Math.min(r.width/2,60),r.bottom);}});
+document.addEventListener('focusout',()=>hideTip());
+document.addEventListener('click',e=>{
+  if(popEl.contains(e.target))return;
+  const el=e.target.closest('[data-tk]');
+  if(el){const d=TIPS.get(el.dataset.tk);if(d&&d.detail){openPop(d,e.clientX||el.getBoundingClientRect().left,e.clientY||el.getBoundingClientRect().bottom,el);return;}}
+  closePop(false);
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){if(!popEl.hidden)closePop(true);hideTip();return;}
+  if((e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('[data-tk]')&&!e.target.matches('tr.click')){const d=TIPS.get(e.target.dataset.tk);if(d&&d.detail){e.preventDefault();const r=e.target.getBoundingClientRect();openPop(d,r.left+r.width/2,r.bottom,e.target);}}
+});
+addEventListener('scroll',()=>{hideTip();if(!popEl.hidden&&Math.abs(scrollY-popY)>60)closePop(false);},{passive:true});
+addEventListener('resize',()=>{hideTip();closePop(false);});
+
+function stagesFor(rows,mode,snap){
+  const sb=x=>sbOf(x,snap);
+  if(mode==='hack'){
+    const s1=rows.filter(x=>x.track===0),s2=s1.filter(x=>sb(x)===0),s3=s2.filter(x=>x.mix===1),s4=s3.filter(x=>x.cert===1);
+    return [s1,s2,s3,s4];
+  }
+  const s1=rows,s2=s1.filter(x=>sb(x)!==3),s3=s2.filter(x=>x.mix>0),s4=s3.filter(x=>x.cert>0);
+  return [s1,s2,s3,s4];
+}
+const STAGE_TXT={
+  prog:[['Signed up','Unique people in the sign-up form'],['In a sandbox','Access to AI Foundry, Databricks or both'],['Requested a voucher','Of those in a sandbox'],['Certified','Completed at least one certification']],
+  hack:[['Chose Both','Signed up for both certifications'],['In both sandboxes','AI Foundry and Databricks access'],['Vouchers for both','Requested AI-103 and Databricks vouchers'],['Eligible','Completed both certifications']]
+};
+const STAGE_C=['var(--stage1)','var(--stage2)','var(--stage3)','var(--stage4)'];
+
+function buildChips(){
+  const defs={loc:LOC,team:TEAM,track:TRACK};
+  document.querySelectorAll('.chips').forEach(el=>{
+    const f=el.dataset.f;
+    el.innerHTML=['All',...defs[f]].map((t,i)=>`<button type="button" class="chip" data-v="${i-1}">${t}</button>`).join('');
+    el.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;st[f]=+b.dataset.v;render();});
+  });
+}
+function syncControls(){
+  document.querySelectorAll('.chips').forEach(el=>{
+    const f=el.dataset.f;
+    el.querySelectorAll('button').forEach(b=>{
+      const on=(f==='track'&&st.mode==='hack')?b.dataset.v==='-1':+b.dataset.v===st[f];
+      b.setAttribute('aria-pressed',String(on));
+      b.disabled=(f==='track'&&st.mode==='hack'&&+b.dataset.v!==-1);
+    });
+  });
+  document.querySelectorAll('.mode button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===st.mode)));
+  document.getElementById('snap').value=st.snap;
+  document.getElementById('cmp').checked=st.cmp;
+  document.getElementById('cmpLab').textContent='Show change since '+SNAP[other()];
+}
+function scopeText(){
+  const p=[];
+  if(st.loc>=0)p.push(LOC[st.loc]);
+  if(st.team>=0)p.push(TEAM[st.team]);
+  if(st.mode!=='hack'&&st.track>=0)p.push(TRACK[st.track]+' track');
+  return p.length?p.join(', '):'all sign-ups';
+}
+
+function renderBanner(){
+  const m=DATA.m[st.snap];
+  const extra=st.snap==='new'?' AI Foundry now lists people with activity in the sandbox; '+m.svc+' entries are service accounts.':'';
+  document.getElementById('banner').innerHTML=`Showing sandbox data as of <b>${SNAP[st.snap]}</b>${st.cmp?`, with changes since ${SNAP[other()]}`:''}. All programme and voucher records are simulated for demonstration.${extra}`;
+}
+
+function renderPipe(){
+  const rows=S.filter(x=>match(x));
+  const sg=stagesFor(rows,st.mode,st.snap), og=stagesFor(rows,st.mode,other()), txt=STAGE_TXT[st.mode];
+  document.getElementById('pipeTitle').textContent=st.mode==='hack'?'Hackathon eligibility':'Programme progress';
+  document.getElementById('pipeDesc').textContent=(st.mode==='hack'
+    ?'Only people with Both at every stage can join the hackathon. Each stage counts people from the stage before it. '
+    :'Each stage counts people from the stage before it. ')+'Showing '+scopeText()+', '+SNAP[st.snap]+'. Hover or select a stage for details.';
+  const ids=sg.map((s,i)=>tk('p',
+    ()=>`<b>${txt[i][0]}</b><br>${fmt(s.length)} people${i?`<br>${pct1(s.length,sg[i-1].length)} of the previous stage (${fmt(sg[i-1].length-s.length)} did not move on)`:''}<br>${pct1(s.length,rows.length)} of ${st.mode==='hack'?'all sign-ups in view':'sign-ups'}${i?'<br>'+chg(s.length,og[i].length):''}`,
+    ()=>detail(txt[i][0],txt[i][1]+'. '+scopeText()+'.',s,{noTrack:st.mode==='hack',extra:i?`<p class="pm">${fmt(sg[i-1].length-s.length)} people from the previous stage have not reached this one yet.</p>`:''})));
+  document.getElementById('stages').innerHTML=sg.map((s,i)=>`
+    <div class="stage"${attr(ids[i])}>
+      <div class="n" style="color:${i===3?STAGE_C[3]:'var(--ink)'}">${fmt(s.length)}${i?dl(s.length,og[i].length):''}</div>
+      <div class="lab">${txt[i][0]}</div>
+      <div class="crit">${txt[i][1]}</div>
+      <div class="conv">${i?`<b>${pct1(s.length,sg[i-1].length)}</b> of previous stage`:(st.mode==='hack'?`<b>${pct1(s.length,rows.length)}</b> of sign-ups`:'&nbsp;')}</div>
+    </div>`).join('');
+  const base=sg[0].length||1;
+  document.getElementById('trackbars').innerHTML=sg.map((s,i)=>`
+    <div class="trow"${attr(ids[i],false)}><span>${txt[i][0]}</span><div class="tbar"><i style="width:${Math.max(s.length?0.6:0,s.length/base*100)}%;background:${STAGE_C[i]}"></i></div><span class="v">${fmt(s.length)}</span></div>`).join('');
+  let side;
+  if(st.mode==='hack'){
+    const oneR=sg[2].filter(x=>x.cert===2||x.cert===3), one=oneR.length;
+    const noBR=rows.filter(x=>x.track===0&&(sbOf(x)===1||sbOf(x)===2)), noB=noBR.length;
+    const noBo=rows.filter(x=>x.track===0&&(sbOf(x,other())===1||sbOf(x,other())===2)).length;
+    const a=tk('p',`<b>Closest to eligible</b><br>${one} with Both track, both sandboxes and both vouchers, and 1 of 2 certifications`,()=>detail('Closest to eligible','Completed 1 of 2 certifications, all other criteria met.',oneR,{noTrack:true}));
+    const b=tk('p',`<b>Both sign-ups with one sandbox</b><br>${noB} people<br>${chg(noB,noBo)}`,()=>detail('Chose Both, only one sandbox','They need access to the other sandbox to stay on track for the hackathon.',noBR,{noTrack:true}));
+    side=`Closest to eligible: <b class="lnk"${attr(a)}>${fmt(one)}</b> ${one===1?'person has':'people have'} completed 1 of 2 certifications. <b class="lnk"${attr(b)}>${fmt(noB)}</b>${dl(noB,noBo)} Both sign-ups have only one of the two sandboxes.`;
+  }else{
+    const vR=rows.filter(x=>sbOf(x)===3&&x.mix>0), vNo=vR.length, vO=rows.filter(x=>sbOf(x,other())===3&&x.mix>0).length, cNo=vR.filter(x=>x.cert>0).length;
+    const a=tk('p',`<b>Voucher but no sandbox</b><br>${vNo} people requested a voucher without sandbox access<br>${chg(vNo,vO)}`,()=>detail('Voucher requested, no sandbox access','These people are outside the funnel above.',vR));
+    side=`Not in the stages above: <b class="lnk"${attr(a)}>${fmt(vNo)}</b>${dl(vNo,vO)} requested a voucher without sandbox access${cNo?`, of whom <b>${cNo}</b> certified`:''}.`;
+  }
+  document.getElementById('side').innerHTML=side;
+}
+
+function renderMoves(){
+  const rows=S.filter(x=>match(x));
+  const A=s=>s===0||s===1, D=s=>s===0||s===2;
+  const items=[
+    [x=>x.sbo===3&&x.sbn!==3,'Newly in a sandbox','Had no access on 30 Sep'],
+    [x=>(x.sbo===1||x.sbo===2)&&x.sbn===0,'Added their second sandbox','Now in both'],
+    [x=>!A(x.sbo)&&A(x.sbn),'New AI Foundry users','Not on the 30 Sep list'],
+    [x=>!D(x.sbo)&&D(x.sbn),'New Databricks users','Not on the 30 Sep list'],
+    [x=>x.sbo!==3&&x.sbn===3,'No longer in a sandbox','On a list on 30 Sep only'],
+    [x=>x.sbo===x.sbn,'No change','Same access on both dates'],
+  ];
+  document.getElementById('moves').innerHTML=items.map(([f,d,w])=>{
+    const sub=rows.filter(f);
+    const from=[0,1,2,3].map(k=>sub.filter(x=>x.sbo===k).length), to=[0,1,2,3].map(k=>sub.filter(x=>x.sbn===k).length);
+    const extra=`<h5>Access on 30 Sep → 13 Oct</h5>${[0,1,2,3].map(k=>(from[k]||to[k])?`<div class="pr"><span>${SB[k]}</span><b>${from[k]} → ${to[k]}</b><em></em></div>`:'').join('')}`;
+    const id=tk('p',`<b>${d}</b><br>${fmt(sub.length)} people (${pct(sub.length,rows.length)} of sign-ups in view)<br>${w}`,()=>detail(d,w+'. '+scopeText()+'.',sub,{extra}));
+    return `<div${attr(id)}><div class="k">${fmt(sub.length)}</div><div class="d"><b style="color:var(--ink)">${d}</b><br>${w}</div></div>`;
+  }).join('');
+}
+
+function renderLoc(){
+  const hack=st.mode==='hack';
+  const head=hack?['Location','Chose Both','Both sandboxes','Vouchers for both','Eligible']:['Location','Signed up','In a sandbox','Voucher','Certified'];
+  let tot=[0,0,0,0],tto=[0,0,0,0];
+  const body=LOC.map((l,i)=>{
+    const rows=S.filter(x=>x.loc===i&&match(x,{loc:1}));
+    const sgr=stagesFor(rows,st.mode,st.snap), sg=sgr.map(s=>s.length), og=stagesFor(rows,st.mode,other()).map(s=>s.length);
+    sg.forEach((v,j)=>tot[j]+=v); og.forEach((v,j)=>tto[j]+=v);
+    const cellId=j=>tk('p',()=>`<b>${l}: ${head[j+1]}</b><br>${fmt(sg[j])} people${j?`<br>${pct1(sg[j],sg[j-1])} of the previous column`:''}${j?'<br>'+chg(sg[j],og[j]):''}`,
+      ()=>detail(`${l}: ${head[j+1]}`,scopeText()==='all sign-ups'?'':'Other filters: '+[st.team>=0?TEAM[st.team]:'',(!hack&&st.track>=0)?TRACK[st.track]+' track':''].filter(Boolean).join(', '),sgr[j],{noLoc:true,noTrack:hack},[['loc',i,`Filter dashboard to ${l}`]]));
+    return `<tr class="click${st.loc===i?' on':''}" tabindex="0" data-loc="${i}" aria-selected="${st.loc===i}" title="Select the row name to filter to ${l}">
+      <td class="rowname">${l}</td><td${attr(cellId(0))}>${fmt(sg[0])}</td>
+      <td${attr(cellId(1))}>${fmt(sg[1])}${dl(sg[1],og[1])}<span class="pct">${pct(sg[1],sg[0])}</span><span class="minibar"><i style="width:${sg[0]?sg[1]/sg[0]*100:0}%"></i></span></td>
+      <td class="${sg[2]?'':'zero'}"${attr(cellId(2))}>${fmt(sg[2])}${dl(sg[2],og[2])}<span class="pct">${pct(sg[2],sg[1])}</span></td>
+      <td class="${sg[3]?'':'zero'}"${attr(cellId(3))}>${fmt(sg[3])}${dl(sg[3],og[3])}</td></tr>`;
+  }).join('');
+  const t=document.getElementById('locTable');
+  t.innerHTML=`<thead><tr>${head.map(h=>`<th scope="col">${h}</th>`).join('')}</tr></thead><tbody>${body}</tbody>
+   <tfoot><tr><td>All locations</td><td>${fmt(tot[0])}</td><td>${fmt(tot[1])}${dl(tot[1],tto[1])}<span class="pct">${pct(tot[1],tot[0])}</span></td><td>${fmt(tot[2])}${dl(tot[2],tto[2])}<span class="pct">${pct(tot[2],tot[1])}</span></td><td>${fmt(tot[3])}${dl(tot[3],tto[3])}</td></tr></tfoot>`;
+  t.querySelectorAll('tr.click').forEach(tr=>{
+    const go=()=>{const v=+tr.dataset.loc;st.loc=st.loc===v?-1:v;render();};
+    tr.querySelector('.rowname').addEventListener('click',go);
+    tr.addEventListener('keydown',e=>{if(e.target===tr&&(e.key==='Enter'||e.key===' ')){e.preventDefault();go();}});
+  });
+}
+
+function stackRows(el,groups,colors,labels,scale,noneIdx){
+  el.innerHTML=groups.map(g=>{
+    const tot=g.vals.reduce((a,b)=>a+b,0), den=scale||tot;
+    const segs=g.vals.map((v,j)=>{const w=den?v/den*100:0;const t=g.tks&&g.tks[j];
+      return `<div class="seg${j===noneIdx?' none':''}" style="width:${w}%;background:${colors[j]}"${t&&v?attr(t):` title="${labels[j]}: ${v}"`}>${w>=10?v:''}</div>`}).join('');
+    return `<div class="stack"><span${g.rowTk?attr(g.rowTk):''}>${g.label}</span><div class="bar" role="group" aria-label="${g.label}: ${g.vals.map((v,j)=>labels[j]+' '+v).join(', ')}">${segs}</div><span class="t">${g.right!==undefined?g.right:tot}</span></div>`;
+  }).join('');
+}
+
+function renderSb(){
+  document.getElementById('sbLegend').innerHTML=SB.map((s,i)=>`<span style="--c:${SBC[i]}">${s}</span>`).join('');
+  const groups=LOC.map((l,i)=>{
+    const rows=S.filter(x=>x.loc===i&&match(x,{loc:1}));
+    const vals=[0,1,2,3].map(k=>rows.filter(x=>sbOf(x)===k).length);
+    const prev=[0,1,2,3].map(k=>rows.filter(x=>sbOf(x,other())===k).length);
+    const tks=[0,1,2,3].map(k=>{const sub=rows.filter(x=>sbOf(x)===k);
+      return tk('p',`<b>${l}: ${SB[k]}</b><br>${fmt(vals[k])} of ${fmt(rows.length)} sign-ups (${pct1(vals[k],rows.length)})<br>${chg(vals[k],prev[k])}`,
+        ()=>detail(`${l}: ${SB[k]}`,`Sandbox access on ${SNAP[st.snap]}.`,sub,{noLoc:true},[['loc',i,`Filter dashboard to ${l}`]]));});
+    const rowTk=tk('p',`<b>${l}</b><br>${fmt(rows.length)} sign-ups, ${pct1(rows.length-vals[3],rows.length)} in a sandbox`,()=>detail(l,'All sign-ups in this location for the current filters.',rows,{noLoc:true},[['loc',i,`Filter dashboard to ${l}`]]));
+    return {label:l,vals,tks,rowTk};
+  });
+  stackRows(document.getElementById('sbBars'),groups,SBC,SB,0,3);
+}
+
+function renderUsage(){
+  const el=document.getElementById('usage');
+  if(st.snap==='old'){el.innerHTML='<p class="empty">Usage data (operations) is available from the 13 Oct 2026 build. Choose that date to see it.</p>';return;}
+  const rows=S.filter(x=>match(x)), users=rows.filter(x=>x.ops>0);
+  const heavy=users.filter(x=>x.ops>=250), light=users.filter(x=>x.ops<50), noVouch=heavy.filter(x=>x.mix===0);
+  const k=[[users,`with AI Foundry activity (${pct(users.length,rows.length)} of sign-ups)`,'People with AI Foundry activity'],
+    [null,'median operations per user'],[heavy,'regular users (250+ operations)','Regular AI Foundry users'],
+    [light,'light users (under 50)','Light AI Foundry users'],[noVouch,'regular users with no voucher yet','Regular users with no voucher']];
+  el.innerHTML=`<div class="kpis">${k.map(([r,l,t])=>{
+      if(!r)return `<div><b>${fmt(medianOf(users.map(x=>x.ops)))}</b>${l}</div>`;
+      const id=tk('p',`<b>${t}</b><br>${fmt(r.length)} people<br>Median ${fmt(medianOf(r.map(x=>x.ops)))} operations`,()=>detail(t,scopeText()+', 13 Oct 2026.',r));
+      return `<div class="lnkbox"${attr(id)}><b>${fmt(r.length)}</b>${l}</div>`;}).join('')}
+    </div>
+    <div class="legend">${BAND.slice(1).map((b,i)=>`<span style="--c:${BANDC[i+1]}">${b} operations</span>`).join('')}<span style="--c:${BANDC[0]}">No activity</span></div>
+    <div id="uBars"></div>`;
+  const order=[1,2,3,4,0];
+  const groups=LOC.map((l,i)=>{
+    const r=S.filter(x=>x.loc===i&&match(x,{loc:1}));
+    const vals=order.map(k=>r.filter(x=>band(x)===k).length);
+    const tks=order.map((k,j)=>{const sub=r.filter(x=>band(x)===k), ops=sub.map(x=>x.ops);
+      const lab=k?`${BAND[k]} operations`:'No AI Foundry activity';
+      return tk('p',`<b>${l}: ${lab}</b><br>${fmt(vals[j])} of ${fmt(r.length)} sign-ups (${pct1(vals[j],r.length)})${k?`<br>Median ${fmt(medianOf(ops))}, total ${fmt(ops.reduce((a,b)=>a+b,0))} operations`:''}`,
+        ()=>detail(`${l}: ${lab}`,'AI Foundry usage on 13 Oct 2026.',sub,{noLoc:true},[['loc',i,`Filter dashboard to ${l}`]]));});
+    const u=r.filter(x=>x.ops>0);
+    const rowTk=tk('p',`<b>${l}</b><br>${fmt(u.length)} of ${fmt(r.length)} with activity<br>Median ${fmt(medianOf(u.map(x=>x.ops)))} operations<br>Total ${fmt(u.reduce((a,x)=>a+x.ops,0))} operations`,null);
+    return {label:l,vals,tks,rowTk};
+  });
+  stackRows(document.getElementById('uBars'),groups,order.map(k=>BANDC[k]),order.map(k=>BAND[k]),0,4);
+}
+
+function renderTrack(){
+  const head=['Track','Signed up','Both sandboxes','AI Foundry only','Databricks only','No access','Voucher (of those in a sandbox)','Certified'];
+  let tot=Array(7).fill(0);
+  const body=TRACK.map((t,i)=>{
+    const rows=S.filter(x=>x.track===i&&match(x,{track:1}));
+    const sbc=[0,1,2,3].map(k=>rows.filter(x=>sbOf(x)===k).length), sbp=[0,1,2,3].map(k=>rows.filter(x=>sbOf(x,other())===k).length);
+    const act=rows.filter(x=>sbOf(x)!==3), v=act.filter(x=>x.mix>0), c=v.filter(x=>x.cert>0);
+    [rows.length,...sbc,v.length,c.length].forEach((x,j)=>tot[j]+=x);
+    const dim=(st.mode!=='hack'&&st.track>=0&&st.track!==i)?' style="opacity:.45"':'';
+    const cell=(sub,lab,tip)=>tk('p',tip,()=>detail(`${t}: ${lab}`,'Track chosen in the sign-up form. '+scopeText()+'.',sub,{noTrack:true},[['track',i,`Filter dashboard to ${t}`]]));
+    const sbIds=[0,1,2,3].map(k=>cell(rows.filter(x=>sbOf(x)===k),SB[k],`<b>${t}: ${SB[k]}</b><br>${fmt(sbc[k])} of ${fmt(rows.length)} (${pct1(sbc[k],rows.length)})<br>${chg(sbc[k],sbp[k])}`));
+    const vId=cell(v,'requested a voucher',`<b>${t}: voucher requested</b><br>${fmt(v.length)} of ${fmt(act.length)} people in a sandbox (${pct1(v.length,act.length)})`);
+    const cId=cell(c,'certified',`<b>${t}: certified</b><br>${fmt(c.length)} of ${fmt(v.length)} with a voucher`);
+    const allId=cell(rows,'all sign-ups',`<b>${t}</b><br>${fmt(rows.length)} sign-ups`);
+    return `<tr${dim}><td>${t}</td><td${attr(allId)}>${fmt(rows.length)}</td>${sbc.map((x,k)=>`<td class="${x?'':'zero'}"${attr(sbIds[k])}>${fmt(x)}${dl(x,sbp[k])}<span class="pct">${pct(x,rows.length)}</span></td>`).join('')}
+      <td${attr(vId)}>${fmt(v.length)}<span class="pct">${pct(v.length,act.length)}</span></td><td class="${c.length?'':'zero'}"${attr(cId)}>${fmt(c.length)}</td></tr>`;
+  }).join('');
+  document.getElementById('trackTable').innerHTML=`<thead><tr>${head.map(h=>`<th scope="col">${h}</th>`).join('')}</tr></thead><tbody>${body}</tbody>
+   <tfoot><tr><td>All tracks</td><td>${fmt(tot[0])}</td>${[1,2,3,4].map(j=>`<td>${fmt(tot[j])}<span class="pct">${pct(tot[j],tot[0])}</span></td>`).join('')}<td>${fmt(tot[5])}<span class="pct">${pct(tot[5],tot[0]-tot[4])}</span></td><td>${fmt(tot[6])}</td></tr></tfoot>`;
+}
+
+const DIMS={
+  loc:{label:'Location',cats:LOC,get:x=>x.loc},
+  team:{label:'Team',cats:TEAM,get:x=>x.team},
+  track:{label:'Track chosen',cats:TRACK,get:x=>x.track},
+  sb:{label:'Sandbox access',cats:SB,get:x=>sbOf(x)},
+  mix:{label:'Voucher requested',cats:MIX,get:x=>x.mix},
+  cert:{label:'Certification',cats:CERT,get:x=>x.cert},
+  use:{label:'AI Foundry usage (13 Oct only)',cats:BAND,get:x=>band(x),newOnly:true},
+};
+function buildX(){
+  ['xr','xc'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.innerHTML=Object.entries(DIMS).map(([k,d])=>`<option value="${k}">${d.label}</option>`).join('');
+    el.value=st[id];
+    el.addEventListener('change',()=>{st[id]=el.value;renderX();});
+  });
+  const v=document.getElementById('xv'); v.addEventListener('change',()=>{st.xv=v.value;renderX();});
+}
+function renderX(){
+  const t=document.getElementById('xTable');
+  const R_=DIMS[st.xr], C_=DIMS[st.xc];
+  document.querySelectorAll('#xr option,#xc option').forEach(o=>{o.disabled=(DIMS[o.value].newOnly&&st.snap==='old');});
+  if((R_.newOnly||C_.newOnly)&&st.snap==='old'){t.innerHTML='<tbody><tr><td class="empty">AI Foundry usage is available from the 13 Oct 2026 build.</td></tr></tbody>';return;}
+  if(st.xr===st.xc){t.innerHTML='<tbody><tr><td class="empty">Choose different fields for rows and columns.</td></tr></tbody>';return;}
+  const rows=S.filter(x=>match(x)).filter(x=>st.mode!=='hack'||x.track===0);
+  const m=R_.cats.map(()=>C_.cats.map(()=>0));
+  rows.forEach(x=>m[R_.get(x)][C_.get(x)]++);
+  const rt=m.map(r=>r.reduce((a,b)=>a+b,0)), ct=C_.cats.map((_,j)=>m.reduce((a,r)=>a+r[j],0)), N=rows.length;
+  const val=(v,i)=>st.xv==='row'?(rt[i]?v/rt[i]:0):st.xv==='tot'?(N?v/N:0):v;
+  const show=(v,i)=>st.xv==='n'?fmt(v):(val(v,i)*100).toFixed(1)+'%';
+  let mx=0; m.forEach((r,i)=>r.forEach(v=>{mx=Math.max(mx,val(v,i));}));
+  const cell=(v,i,j)=>{const a=mx?val(v,i)/mx:0;
+    const id=tk('p',`<b>${R_.cats[i]} × ${C_.cats[j]}</b><br>${fmt(v)} people<br>${pct1(v,rt[i])} of ${R_.cats[i]}<br>${pct1(v,ct[j])} of ${C_.cats[j]}<br>${pct1(v,N)} of everyone in view`,
+      v?()=>detail(`${R_.cats[i]} × ${C_.cats[j]}`,`${R_.label}: ${R_.cats[i]}. ${C_.label}: ${C_.cats[j]}.`,rows.filter(x=>R_.get(x)===i&&C_.get(x)===j)):null);
+    return `<td class="${v?'':'zero'}" style="background:color-mix(in srgb,var(--stage2) ${Math.round(a*38)}%,transparent)"${attr(id,!!v)}>${show(v,i)}</td>`;};
+  t.innerHTML=`<thead><tr><th scope="col">${R_.label} \\ ${C_.label}</th>${C_.cats.map(c=>`<th scope="col">${c}</th>`).join('')}<th scope="col">Total</th></tr></thead>
+   <tbody>${m.map((r,i)=>`<tr><td>${R_.cats[i]}</td>${r.map((v,j)=>cell(v,i,j)).join('')}<td><b>${fmt(rt[i])}</b></td></tr>`).join('')}</tbody>
+   <tfoot><tr><td>Total</td>${ct.map(v=>`<td>${fmt(v)}</td>`).join('')}<td>${fmt(N)}</td></tr></tfoot>`;
+}
+
+function renderFU(){
+  const rows=S.filter(x=>match(x));
+  const defs=[
+    [s=>x=>sbOf(x,s)===3,'No sandbox access yet','Unique Data: Sandbox status = Not active'],
+    [s=>x=>sbOf(x,s)!==3&&x.mix===0,'In a sandbox, no voucher request','Unique Data: Sandbox status ≠ Not active, then check against Voucher Requests'],
+    [s=>x=>x.track===0&&(sbOf(x,s)===1||sbOf(x,s)===2),'Chose Both, only one sandbox','Unique Data: Certificate = Both, Sandbox status = AI Foundry only or Databricks only'],
+    [s=>x=>sbOf(x,s)===3&&x.mix>0,'Voucher requested, no sandbox access','Voucher Requests: User sandbox status = Not active'],
+    [s=>x=>x.mix>0&&x.cert===0,'Has a voucher, not yet certified','Voucher Requests: User certification = Not yet']];
+  const note=st.snap==='old'?' These snapshots are simulated.':'';
+  document.getElementById('fu').innerHTML=defs.map(([f,d,w],i)=>{
+    const sub=rows.filter(f(st.snap)), o=rows.filter(f(other())).length;
+    const id=tk('p',`<b>${d}</b><br>${fmt(sub.length)} people (${pct1(sub.length,rows.length)} of sign-ups in view)<br>${chg(sub.length,o)}`,
+      ()=>detail(d,`Synthetic demonstration: suggested workbook filter ${w}.`,sub));
+    return `<div${attr(id)}><div class="k">${fmt(sub.length)}${dl(sub.length,o)}</div><div class="d">${d}</div><div class="w">${w}${i===0?note:''}</div></div>`;
+  }).join('');
+}
+
+function renderReq(){
+  const rows=R.filter(x=>match(x));
+  const A=rows.filter(x=>x.course===0).length,B=rows.filter(x=>x.course===1).length;
+  const body=STAT.map((s,i)=>{const a=rows.filter(x=>x.status===i&&x.course===0).length,b=rows.filter(x=>x.status===i&&x.course===1).length;
+    if(!(a+b))return '';
+    const ta=tk('p',`<b>${s}: AI-103</b><br>${a} of ${A} AI-103 requests (${pct1(a,A)})`,null), tb=tk('p',`<b>${s}: Databricks</b><br>${b} of ${B} Databricks requests (${pct1(b,B)})`,null);
+    return `<tr><td>${s}</td><td class="${a?'':'zero'}"${attr(ta,false)}>${a}</td><td class="${b?'':'zero'}"${attr(tb,false)}>${b}</td><td><b>${a+b}</b></td></tr>`;}).join('');
+  document.getElementById('reqTable').innerHTML=`<thead><tr><th scope="col">Status</th><th scope="col">AI-103</th><th scope="col">Databricks</th><th scope="col">Total</th></tr></thead>
+   <tbody>${body||'<tr><td colspan="4" class="zero">No voucher requests for these filters.</td></tr>'}</tbody><tfoot><tr><td>All requests</td><td>${A}</td><td>${B}</td><td>${A+B}</td></tr></tfoot>`;
+}
+
+function renderV(){
+  const labs=['Both','AI-103 only','Databricks only'],cols=['var(--both)','var(--ai)','var(--dbx)'];
+  document.getElementById('vLegend').innerHTML=labs.map((s,i)=>`<span style="--c:${cols[i]}">${s}</span>`).join('');
+  const rows=S.filter(x=>match(x)&&x.mix>0);
+  const mk=(field,word)=>[1,2,3].map(k=>{const sub=rows.filter(x=>x[field]===k);
+    return tk('p',`<b>${word}: ${labs[k-1]}</b><br>${fmt(sub.length)} of ${fmt(rows.length)} people with a voucher (${pct1(sub.length,rows.length)})`,()=>detail(`${word}: ${labs[k-1]}`,'People with at least one voucher request. '+scopeText()+'.',sub));});
+  const g=[{label:'Vouchers requested',vals:[1,2,3].map(k=>rows.filter(x=>x.mix===k).length),tks:mk('mix','Vouchers requested')},
+           {label:'Certified',vals:[1,2,3].map(k=>rows.filter(x=>x.cert===k).length),tks:mk('cert','Certified')}];
+  const el=document.getElementById('vBars');
+  stackRows(el,g,cols,labs,rows.length,-1);
+  el.insertAdjacentHTML('beforeend',`<p class="hint" style="margin:10px 0 0">Both bars use the same scale, so the certified bar shows ${rows.filter(x=>x.cert>0).length} of ${rows.length} people with a voucher.</p>`);
+}
+
+function renderFoot(){
+  const m=DATA.m[st.snap];
+  document.getElementById('foot').innerHTML=`
+  <p>All sign-up records are artificially generated for this public demonstration. No real individuals are represented.</p>
+  <p>Sandbox lists as of ${SNAP[st.snap]}: AI Foundry ${fmt(m.af)} entries (${fmt(m.afm)} matched to a sign-up), Databricks ${fmt(m.db)} users (${fmt(m.dbm)} matched). Entries not matched to a sign-up are excluded.</p>
+  <p>Voucher requests, sandbox activity and cost figures are synthetic examples.</p>
+  <p>Certified means the voucher status is "Voucher Shared and learner completed". Hackathon eligibility requires Both at every stage: track chosen, sandbox access, vouchers and certifications.</p>`;
+}
+
+function render(){clearTips('p');closePop(false);hideTip();syncControls();renderBanner();renderPipe();renderMoves();renderLoc();renderSb();renderUsage();renderTrack();renderX();renderFU();renderReq();renderV();renderFoot();}
+document.querySelectorAll('.mode button').forEach(b=>b.addEventListener('click',()=>{st.mode=b.dataset.mode;render();}));
+document.getElementById('reset').addEventListener('click',()=>{st.loc=-1;st.team=-1;st.track=-1;render();});
+document.getElementById('snap').addEventListener('change',e=>{st.snap=e.target.value;if((DIMS[st.xr].newOnly||DIMS[st.xc].newOnly)&&st.snap==='old'){}render();});
+document.getElementById('cmp').addEventListener('change',e=>{st.cmp=e.target.checked;render();});
+buildChips();buildX();render();
+/* ================= COST DASHBOARD ================= */
+const COST_BASE={"version":1,"months":["2026-06","2026-07","2026-08","2026-09","2026-10","2026-11","2026-12"],"mtd":{"2026-10":true},"lines":[{"id":"af1","group":"AI Foundry","name":"Demo AI Foundry environment","kind":"cost","v":{"2026-06":125,"2026-07":410,"2026-08":620,"2026-09":790,"2026-10":380}},{"id":"af2","group":"AI Foundry","name":"Demo shared services","kind":"cost","v":{"2026-06":85,"2026-07":110,"2026-08":150,"2026-09":175,"2026-10":90}},{"id":"afu","group":"AI Foundry","name":"Logged on users","kind":"users","v":{"2026-07":110,"2026-08":145,"2026-09":176,"2026-10":184}},{"id":"db1","group":"Databricks","name":"Demo Databricks workspace","kind":"cost","v":{"2026-06":90,"2026-07":320,"2026-08":460,"2026-09":525,"2026-10":240}},{"id":"dbu","group":"Databricks","name":"Logged on users","kind":"users","v":{"2026-07":90,"2026-08":113,"2026-09":136,"2026-10":149}},{"id":"sup","group":"Support","name":"Illustrative support cost","kind":"cost","v":{"2026-06":200,"2026-07":200,"2026-08":200,"2026-09":200,"2026-10":200}}],"forecast":{"method":"avg3","manual":{}},"budget":12500,"updatedAt":null};
+const COST_KEY='dto-pioneers-synthetic-demo-v1';
+const GCOL={'AI Foundry':'var(--ai)','Databricks':'var(--dbx)','Support':'var(--stage3)'};
+const XCOL=['#2E9C8F','#C0567A','#6B7A2E','#8A5A2B'];
+const cs={hidden:new Set(),model:null,saved:null,mode:'local',ref:null,readOnly:false,remoteNewer:false,savedAt:null,downloads:null};
+const clone=o=>JSON.parse(JSON.stringify(o));
+const eur=(n,d=0)=>n==null||isNaN(n)?'–':'€'+Number(n).toLocaleString('en-GB',{minimumFractionDigits:d,maximumFractionDigits:d});
+const eur2=n=>eur(n,2);
+const mLabel=k=>{const [y,m]=k.split('-');return new Date(+y,+m-1,1).toLocaleString('en-GB',{month:'short'})+(m==='01'?' '+y:'');};
+const mLong=k=>{const [y,m]=k.split('-');return new Date(+y,+m-1,1).toLocaleString('en-GB',{month:'long',year:'numeric'});};
+function parseNum(s){
+  if(s==null)return null; s=String(s).trim(); if(s==='')return null;
+  if(/^[€\s-]+$/.test(s))return 0;
+  const n=parseFloat(s.replace(/[€\s,]/g,'')); return isNaN(n)?NaN:n;
+}
+function groups(m){const g=[];m.lines.forEach(l=>{if(!g.includes(l.group))g.push(l.group);});return g;}
+function gColor(g,m){if(GCOL[g])return GCOL[g];const extra=groups(m).filter(x=>!GCOL[x]);return XCOL[extra.indexOf(g)%XCOL.length];}
+function hasData(m,k){return m.lines.some(l=>l.kind==='cost'&&l.v[k]!=null);}
+function gCost(m,g,k){return m.lines.filter(l=>l.kind==='cost'&&l.group===g).reduce((a,l)=>a+(l.v[k]||0),0);}
+function gUsers(m,g,k){const ls=m.lines.filter(l=>l.kind==='users'&&l.group===g&&l.v[k]!=null);return ls.length?ls.reduce((a,l)=>a+l.v[k],0):null;}
+function analyse(m){
+  const G=groups(m), cg=G.filter(g=>m.lines.some(l=>l.group===g&&l.kind==='cost'));
+  const actual=m.months.filter(k=>hasData(m,k));
+  const lastActual=actual[actual.length-1];
+  const complete=actual.filter(k=>!m.mtd[k]);
+  const base=m.forecast.method==='last'?complete.slice(-1):complete.slice(-3);
+  const rate={}; cg.forEach(g=>rate[g]=base.length?base.reduce((a,k)=>a+gCost(m,g,k),0)/base.length:0);
+  const rateTot=cg.reduce((a,g)=>a+rate[g],0);
+  const fMonths=m.months.filter(k=>!hasData(m,k)&&(!lastActual||k>lastActual));
+  const fc={}; // forecast per month per group
+  fMonths.forEach(k=>{
+    if(m.forecast.method==='manual'){
+      const t=m.forecast.manual[k]; fc[k]={};
+      cg.forEach(g=>fc[k][g]=t==null?0:(rateTot?t*rate[g]/rateTot:t/cg.length));
+    }else{fc[k]={};cg.forEach(g=>fc[k][g]=rate[g]);}
+  });
+  const tot=k=>cg.reduce((a,g)=>a+gCost(m,g,k),0);
+  const spent=actual.reduce((a,k)=>a+tot(k),0);
+  const mtdRest=actual.filter(k=>m.mtd[k]).reduce((a,k)=>a+Math.max(0,rateTot-tot(k)),0);
+  const fTot=fMonths.reduce((a,k)=>a+cg.reduce((b,g)=>b+fc[k][g],0),0);
+  return {G,cg,actual,complete,base,rate,rateTot,fMonths,fc,tot,spent,mtdRest,yearEnd:spent+mtdRest+fTot,lastActual};
+}
+
+function lineName(n){return n.length>34?n.slice(0,16)+'…'+n.slice(-14):n;}
+function monthDetail(k){
+  const m=cs.model,a=analyse(m),i=m.months.indexOf(k);
+  const prevK=a.actual[a.actual.indexOf(k)-1], t=a.tot(k), pt=prevK?a.tot(prevK):null;
+  let cum=0; for(const x of a.actual){cum+=a.tot(x);if(x===k)break;}
+  let h=`<h4>${mLong(k)}${m.mtd[k]?' (to date)':''}</h4><div class="big">${eur2(t)}</div>`;
+  h+=`<p class="pm">${pt!=null?`${t>=pt?'Up':'Down'} ${eur2(Math.abs(t-pt))} (${pt?Math.abs((t-pt)/pt*100).toFixed(0):'–'}%) on ${mLong(prevK)}. `:''}Running total ${eur2(cum)}${m.budget?`, ${(cum/m.budget*100).toFixed(0)}% of the budget`:''}.</p>`;
+  a.cg.forEach(g=>{
+    const gc=gCost(m,g,k), u=gUsers(m,g,k);
+    h+=`<h5><span class="sw" style="background:${gColor(g,m)}"></span>${esc(g)}: ${eur2(gc)} <em>${pct(gc,t)} of month</em></h5>`;
+    m.lines.filter(l=>l.group===g&&l.kind==='cost').forEach(l=>{h+=`<div class="pr"><span title="${esc(l.name)}">${esc(lineName(l.name))}</span><b>${l.v[k]==null?'–':eur2(l.v[k])}</b><em></em></div>`;});
+    if(u)h+=`<div class="pr"><span>Logged-on users</span><b>${fmt(u)}</b><em>${eur2(gc/u)} each</em></div>`;
+  });
+  return h;
+}
+function forecastDetail(k){
+  const m=cs.model,a=analyse(m),f=a.fc[k],t=a.cg.reduce((x,g)=>x+f[g],0);
+  const how=m.forecast.method==='manual'?'Entered manually and split by each sandbox\'s recent share.':`${m.forecast.method==='last'?'Same as':'Average of'} ${a.base.map(mLong).join(', ')}.`;
+  return `<h4>${mLong(k)} forecast</h4><div class="big">${eur2(t)}</div><p class="pm">${how} Change the method or enter actual values in Edit cost data.</p>`+
+    a.cg.map(g=>`<div class="pr"><span><span class="sw" style="background:${gColor(g,m)}"></span>${esc(g)}</span><b>${eur2(f[g])}</b><em>${pct(f[g],t)}</em></div>`).join('');
+}
+function cRender(){
+  clearTips('c');closePop(false);hideTip();
+  const m=cs.model, a=analyse(m);
+  renderCKpis(m,a); renderCCols(m,a); renderCCum(m,a); renderCSummary(m,a); renderCEditor(m,a); renderCStatus();
+}
+function perUser(m,a){
+  const parts=a.cg.filter(g=>m.lines.some(l=>l.group===g&&l.kind==='users')).map(g=>{
+    const k=[...a.actual].reverse().find(x=>gUsers(m,g,x));
+    return k?{g,k,v:gCost(m,g,k)/gUsers(m,g,k),u:gUsers(m,g,k)}:null;}).filter(Boolean);
+  if(!parts.length)return ['–','Cost per user','Add a user count line to see this'];
+  return [parts.map(p=>eur2(p.v)).join(' / '),'Cost per logged-on user',parts.map(p=>`${p.g}: ${fmt(p.u)} users in ${mLabel(p.k)}`).join('; ')];
+}
+function renderCKpis(m,a){
+  const last=a.lastActual, prev=a.actual[a.actual.length-2];
+  const lt=last?a.tot(last):0, pv=prev?a.tot(prev):null;
+  const ch=pv?((lt-pv)/pv*100):null;
+  const budget=m.budget;
+  const methodTxt={avg3:'average of last 3 complete months',last:'same as last complete month',manual:'manual forecast'}[m.forecast.method];
+  const fSum=a.fMonths.reduce((x,k)=>x+a.cg.reduce((y,g)=>y+a.fc[k][g],0),0);
+  const k=[
+    [eur2(a.spent),'Spent to date',`${a.actual.length} months, ${a.actual.length?mLabel(a.actual[0])+'–'+mLabel(last):''}`,
+      ()=>`<b>Spent to date by sandbox</b>${a.cg.map(g=>{const v=a.actual.reduce((x,k)=>x+gCost(m,g,k),0);return `<br>${esc(g)}: ${eur2(v)} (${pct(v,a.spent)})`;}).join('')}`,null],
+    [eur2(lt),`${last?mLong(last):'Latest month'}${last&&m.mtd[last]?' (to date)':''}`,ch==null?'':`${ch>=0?'+':'−'}${Math.abs(ch).toFixed(0)}% vs ${mLabel(prev)}`,
+      ()=>`<b>${last?mLong(last):''}</b>${a.cg.map(g=>`<br>${esc(g)}: ${eur2(gCost(m,g,last))}${pv!=null?` (${mLabel(prev)}: ${eur2(gCost(m,g,prev))})`:''}`).join('')}`,last?()=>monthDetail(last):null],
+    [eur2(a.rateTot),'Monthly run rate',a.base.length?`Based on ${a.base.map(mLabel).join(', ')}`:'Not enough complete months',
+      ()=>`<b>Run rate per month</b>${a.cg.map(g=>`<br>${esc(g)}: ${eur2(a.rate[g])}`).join('')}<br>Used to forecast the remaining months`,null],
+    [eur2(a.yearEnd),`Forecast to ${mLong(m.months[m.months.length-1])}`,methodTxt+(a.mtdRest?`, incl. ${eur(a.mtdRest)} for the rest of ${mLabel(a.actual.find(x=>m.mtd[x]))}`:''),
+      ()=>`<b>How the forecast adds up</b><br>Spent to date: ${eur2(a.spent)}${a.mtdRest?`<br>Rest of current month: ${eur2(a.mtdRest)}`:''}${a.fMonths.map(k=>`<br>${mLong(k)}: ${eur2(a.cg.reduce((y,g)=>y+a.fc[k][g],0))}`).join('')}<br><b>Total: ${eur2(a.yearEnd)}</b>`,null],
+    budget?[`${(a.yearEnd/budget*100).toFixed(0)}%`,'Of budget (forecast)',`${eur(a.spent)} spent of ${eur(budget)}; ${eur(Math.abs(budget-a.yearEnd))} ${budget-a.yearEnd>=0?'headroom':'over'}`,
+      `<b>Budget ${eur2(budget)}</b><br>Spent: ${eur2(a.spent)} (${(a.spent/budget*100).toFixed(0)}%)<br>Forecast: ${eur2(a.yearEnd)} (${(a.yearEnd/budget*100).toFixed(0)}%)`,null]
+      :['–','Budget','Add a budget below to track against it','Set the programme budget in Edit cost data',null],
+    [...perUser(m,a),()=>{const ug=a.cg.filter(g=>m.lines.some(l=>l.group===g&&l.kind==='users'));
+      return `<b>Cost per logged-on user</b>`+ug.map(g=>`<br>${esc(g)}: `+a.actual.filter(x=>gUsers(m,g,x)).map(x=>`${mLabel(x)} ${eur2(gCost(m,g,x)/gUsers(m,g,x))}`).join(', ')).join('');},null],
+  ];
+  document.getElementById('cKpis').innerHTML=k.map(([v,l,s,tip,det])=>{const id=tk('c',tip,det);return `<div${attr(id,true)}><div class="v">${v}</div><div class="l">${l}</div><div class="s">${s}</div></div>`;}).join('');
+}
+
+function renderCCols(m,a){
+  const vis=a.cg.filter(g=>!cs.hidden.has(g));
+  document.getElementById('cLegend').innerHTML=a.cg.map(g=>`<button type="button" class="lg" data-g="${esc(g)}" aria-pressed="${!cs.hidden.has(g)}" style="--c:${gColor(g,m)}">${esc(g)}</button>`).join('')+'<span style="--c:var(--line)">Forecast (shaded)</span>';
+  document.querySelectorAll('#cLegend .lg').forEach(b=>b.onclick=()=>{const g=b.dataset.g;if(cs.hidden.has(g))cs.hidden.delete(g);else if(vis.length>1)cs.hidden.add(g);cRender();});
+  document.getElementById('cMonthHint').textContent='Actual spend by sandbox. Shaded columns are forecasts. Select a legend item to show or hide it.'+(cs.hidden.size?` Hidden: ${[...cs.hidden].join(', ')}.`:'');
+  const vals=m.months.map(k=>{
+    if(a.actual.includes(k))return {k,fc:false,parts:vis.map(g=>gCost(m,g,k))};
+    if(a.fc[k])return {k,fc:true,parts:vis.map(g=>a.fc[k][g])};
+    return {k,fc:false,parts:vis.map(()=>0),empty:true};
+  });
+  const max=Math.max(1,...vals.map(v=>v.parts.reduce((x,y)=>x+y,0)));
+  document.getElementById('cCols').innerHTML=vals.map((v,vi)=>{
+    const t=v.parts.reduce((x,y)=>x+y,0), h=t/max*100, full=v.fc?a.cg.reduce((x,g)=>x+a.fc[v.k][g],0):a.tot(v.k);
+    const prevV=vi&&!vals[vi-1].empty?vals[vi-1]:null, pt=prevV?prevV.parts.reduce((x,y)=>x+y,0):null;
+    const colTip=v.empty?null:tk('c',()=>`<b>${mLong(v.k)}${v.fc?' (forecast)':m.mtd[v.k]?' (to date)':''}</b>${vis.map((g,i)=>`<br><span class="sw" style="background:${gColor(g,m)}"></span>${esc(g)}: ${eur2(v.parts[i])}`).join('')}<br><b>Total: ${eur2(full)}</b>${pt!=null&&!v.fc?`<br>${t>=pt?'+':'−'}${eur2(Math.abs(t-pt))} vs ${mLabel(vals[vi-1].k)}`:''}`,
+      ()=>v.fc?forecastDetail(v.k):monthDetail(v.k));
+    const segs=v.parts.map((p,i)=>{const g=vis[i];
+      const sid=tk('c',()=>{let s=`<b>${mLong(v.k)}: ${esc(g)}</b><br>${eur2(p)} (${pct(p,full)} of the month)${v.fc?'<br>Forecast':''}`;
+        if(!v.fc){m.lines.filter(l=>l.group===g&&l.kind==='cost'&&l.v[v.k]).forEach(l=>{s+=`<br>${esc(lineName(l.name))}: ${eur2(l.v[v.k])}`;});const u=gUsers(m,g,v.k);if(u)s+=`<br>${fmt(u)} users, ${eur2(p/u)} each`;}
+        return s;},()=>v.fc?forecastDetail(v.k):monthDetail(v.k));
+      return `<i style="height:${t?p/t*100:0}%;background:${gColor(g,m)}"${p?attr(sid,false):''}></i>`;}).join('');
+    return `<div class="col${v.fc?' fc':''}"${colTip?attr(colTip):''} aria-label="${mLong(v.k)}: ${eur2(t)}">
+      <div class="tot">${t?eur(t):''}</div>
+      <div class="stk" style="height:calc(${h}% - 20px)">${segs}</div></div>`;
+  }).join('');
+  document.getElementById('cXl').innerHTML=vals.map(v=>`<span><b>${mLabel(v.k)}</b>${v.fc?'forecast':m.mtd[v.k]?'to date':''}</span>`).join('');
+}
+
+function renderCCum(m,a){
+  let run=0; const pts=[];
+  m.months.forEach(k=>{
+    if(a.actual.includes(k)){const extra=m.mtd[k]?Math.max(0,a.rateTot-a.tot(k)):0;run+=a.tot(k)+extra;pts.push({k,v:run,fc:false,mv:a.tot(k)+extra});}
+    else if(a.fc[k]){const mv=a.cg.reduce((x,g)=>x+a.fc[k][g],0);run+=mv;pts.push({k,v:run,fc:true,mv});}
+  });
+  const W=520,H=240,pl=56,pr=14,pt=14,pb=28;
+  const max=Math.max(1,run,m.budget||0)*1.08;
+  const x=i=>pl+(pts.length>1?i*(W-pl-pr)/(pts.length-1):0), y=v=>pt+(H-pt-pb)*(1-v/max);
+  const ai=pts.findIndex(p=>p.fc);
+  const actPts=pts.filter(p=>!p.fc);
+  const line=(arr,off)=>arr.map((p,i)=>`${x(i+off).toFixed(1)},${y(p.v).toFixed(1)}`).join(' ');
+  const fcArr=ai>0?pts.slice(ai-1):[];
+  const ticks=[0,.25,.5,.75,1].map(f=>f*max);
+  const hits=pts.map((p,i)=>{const id=tk('c',`<b>${mLong(p.k)}${p.fc?' (forecast)':''}</b><br>This month: ${eur2(p.mv)}<br>Running total: ${eur2(p.v)}${m.budget?`<br>${(p.v/m.budget*100).toFixed(0)}% of budget`:''}`,()=>p.fc?forecastDetail(p.k):monthDetail(p.k));
+    const step=pts.length>1?(W-pl-pr)/(pts.length-1):W-pl-pr;
+    return `<g class="hit"${attr(id)} role="button" aria-label="${mLong(p.k)} running total ${eur(p.v)}"><rect x="${Math.max(pl,x(i)-step/2)}" y="${pt}" width="${Math.min(step,W-pr-Math.max(pl,x(i)-step/2))}" height="${H-pt-pb}" fill="transparent" pointer-events="all"/><line x1="${x(i)}" x2="${x(i)}" y1="${pt}" y2="${H-pb}" class="guide" pointer-events="none"/><circle class="dot" cx="${x(i)}" cy="${y(p.v)}" r="3.5" fill="${p.fc?'var(--panel)':'var(--ink)'}" stroke="var(--ink)" stroke-width="1.5"/></g>`;}).join('');
+  document.getElementById('cCum').innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" aria-label="Cumulative spend ${eur(a.spent)} to date, forecast ${eur(a.yearEnd)}">
+    ${ticks.map(t=>`<line x1="${pl}" x2="${W-pr}" y1="${y(t)}" y2="${y(t)}" stroke="var(--soft)"/><text x="${pl-6}" y="${y(t)+4}" text-anchor="end" font-size="10.5" fill="var(--muted)">${t>=1000?'€'+(t/1000).toFixed(t>=10000?0:1)+'k':'€'+Math.round(t)}</text>`).join('')}
+    ${m.budget?`<line x1="${pl}" x2="${W-pr}" y1="${y(m.budget)}" y2="${y(m.budget)}" stroke="var(--muted)" stroke-dasharray="5 4"/><text x="${W-pr}" y="${y(m.budget)-5}" text-anchor="end" font-size="11" fill="var(--muted)">Budget ${eur(m.budget)}</text>`:''}
+    <polyline points="${line(actPts,0)}" fill="none" stroke="var(--ink)" stroke-width="2.5"/>
+    ${fcArr.length?`<polyline points="${line(fcArr,ai-1)}" fill="none" stroke="var(--ink)" stroke-width="2" stroke-dasharray="6 5" opacity=".6"/>`:''}
+    ${pts.map((p,i)=>`<text x="${x(i)}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--muted)">${mLabel(p.k)}</text>`).join('')}
+    ${pts.length?`<text x="${x(pts.length-1)}" y="${y(run)-10}" text-anchor="end" font-size="12" font-weight="700" fill="var(--ink)">${eur(run)}</text>`:''}
+    ${hits}
+  </svg>`;
+}
+
+function renderCSummary(m,a){
+  const userGroups=a.cg.filter(g=>m.lines.some(l=>l.group===g&&l.kind==='users'));
+  const other=a.cg.filter(g=>!userGroups.includes(g));
+  const head=['Month',...userGroups.flatMap(g=>[g+' cost','Users','€ per user']),...other.map(g=>g),'Total','Cumulative'];
+  let cum=0;
+  const rows=a.actual.map(k=>{
+    cum+=a.tot(k);
+    const id=tk('c',`<b>${mLong(k)}</b><br>Total ${eur2(a.tot(k))}<br>Running total ${eur2(cum)}`,()=>monthDetail(k));
+    return `<tr class="hov"${attr(id)}><td>${mLong(k)}${m.mtd[k]?' (to date)':''}</td>${userGroups.map(g=>{const c=gCost(m,g,k),u=gUsers(m,g,k);return `<td>${eur2(c)}</td><td>${u==null?'<span class="zero">–</span>':fmt(u)}</td><td><b>${u?eur2(c/u):'<span class="zero">–</span>'}</b></td>`;}).join('')}${other.map(g=>`<td>${eur2(gCost(m,g,k))}</td>`).join('')}<td><b>${eur2(a.tot(k))}</b></td><td>${eur2(cum)}</td></tr>`;
+  }).join('');
+  const tot=`<tr><td>Total</td>${userGroups.map(g=>{const c=a.actual.reduce((x,k)=>x+gCost(m,g,k),0);return `<td>${eur2(c)}</td><td></td><td></td>`;}).join('')}${other.map(g=>`<td>${eur2(a.actual.reduce((x,k)=>x+gCost(m,g,k),0))}</td>`).join('')}<td>${eur2(a.spent)}</td><td></td></tr>`;
+  document.getElementById('cSummary').innerHTML=`<thead><tr>${head.map(h=>`<th scope="col">${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody><tfoot>${tot}</tfoot>`;
+}
+
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function renderCEditor(m,a){
+  const ro=cs.readOnly?' disabled':'';
+  const G=groups(m);
+  const head=`<tr><th scope="col">Sandbox</th><th scope="col">Resource group / line</th><th scope="col">Type</th>${m.months.map(k=>`<th scope="col">${mLabel(k)}<label class="mtd" title="Tick if this month is not finished yet"><input type="checkbox" data-mtd="${k}"${m.mtd[k]?' checked':''}${ro}>to date</label></th>`).join('')}<th></th></tr>`;
+  const val=v=>v==null?'':(Number.isInteger(v)?String(v):v.toFixed(2));
+  let body='';
+  G.forEach(g=>{
+    m.lines.filter(l=>l.group===g).forEach(l=>{
+      body+=`<tr data-id="${l.id}">
+        <td><input list="cGroups" data-f="group" value="${esc(l.group)}" aria-label="Sandbox"${ro} style="width:120px"></td>
+        <td><input class="nm" data-f="name" value="${esc(l.name)}" aria-label="Line name"${ro}></td>
+        <td><select data-f="kind" aria-label="Type"${ro}><option value="cost"${l.kind==='cost'?' selected':''}>Cost (€)</option><option value="users"${l.kind==='users'?' selected':''}>Users</option></select></td>
+        ${m.months.map(k=>`<td><input class="num" data-m="${k}" inputmode="decimal" value="${val(l.v[k])}" aria-label="${esc(l.name)} ${mLong(k)}"${ro}></td>`).join('')}
+        <td>${cs.readOnly?'':`<button class="del" type="button" data-del="${l.id}" aria-label="Delete ${esc(l.name)}" title="Delete line">×</button>`}</td></tr>`;
+    });
+  });
+  const totRow=`<tr><td colspan="3"><b>Monthly cost</b></td>${m.months.map(k=>`<td style="text-align:right"><b>${hasData(m,k)?eur2(a.tot(k)):(a.fc[k]?'<span class="zero">'+eur(a.cg.reduce((x,g)=>x+a.fc[k][g],0))+' fc</span>':'')}</b></td>`).join('')}<td></td></tr>`;
+  const man=m.forecast.method==='manual'?`<tr><td colspan="3"><b>Manual forecast (total €)</b></td>${m.months.map(k=>a.fMonths.includes(k)?`<td><input class="num" data-fc="${k}" inputmode="decimal" value="${val(m.forecast.manual[k])}" aria-label="Forecast ${mLong(k)}"${ro}></td>`:'<td></td>').join('')}<td></td></tr>`:'';
+  document.getElementById('cEditor').innerHTML=`<thead>${head}</thead><tbody>${body}</tbody><tfoot>${totRow}${man}</tfoot>`+`<datalist id="cGroups">${G.map(g=>`<option value="${esc(g)}">`).join('')}</datalist>`;
+  document.getElementById('cMethod').value=m.forecast.method;
+  document.getElementById('cBudget').value=m.budget==null?'':m.budget;
+  ['cMethod','cBudget','cAddCost','cAddUsers','cAddMonth','cDelMonth','cImport','cSave','cRevert'].forEach(id=>document.getElementById(id).disabled=cs.readOnly);
+}
+function isDirty(){return JSON.stringify(cs.model)!==JSON.stringify(cs.saved);}
+function renderCStatus(){
+  const el=document.getElementById('cStatus'), d=isDirty();
+  el.className='status'+(d?' dirty':'');
+  const where=cs.mode==='db'?'shared with everyone who opens this dashboard':'in this browser only';
+  el.textContent=cs.readOnly?'View only: you can look but not change the data':d?'Unsaved changes':cs.savedAt?`Saved ${new Date(cs.savedAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}, ${where}`:`Not saved yet (${where})`;
+  document.getElementById('cSave').disabled=cs.readOnly||!d;
+  document.getElementById('cRevert').disabled=cs.readOnly||!d;
+  document.getElementById('cWarn').innerHTML=cs.remoteNewer?`<div class="warn">Someone else saved new cost data while you were editing. <button class="btn" type="button" id="cLoadRemote">Load their version</button> or save yours to replace it.</div>`:'';
+  const lr=document.getElementById('cLoadRemote'); if(lr)lr.onclick=()=>{cs.model=clone(cs.saved);cs.remoteNewer=false;cRender();};
+  document.getElementById('cNote').textContent=cs.mode==='db'
+    ?'Saved changes are shared: everyone who opens this dashboard sees the same cost data. Use Export data file to keep a copy.'
+    :'This synthetic demo saves edits in this browser only. To share your changes, use Export data file and send it; others can load it with Import data file.';
+}
+function cUpdate(fn){fn(cs.model);cRender();}
+function newId(){return 'l'+Math.random().toString(36).slice(2,9);}
+function cBind(){
+  const ed=document.getElementById('cEditor');
+  ed.addEventListener('change',e=>{
+    const t=e.target, tr=t.closest('tr[data-id]');
+    if(t.dataset.mtd){cUpdate(m=>{if(t.checked)m.mtd[t.dataset.mtd]=true;else delete m.mtd[t.dataset.mtd];});return;}
+    if(t.dataset.fc){const n=parseNum(t.value);if(Number.isNaN(n)){t.value='';return;}cUpdate(m=>{if(n==null)delete m.forecast.manual[t.dataset.fc];else m.forecast.manual[t.dataset.fc]=n;});return;}
+    if(!tr)return;
+    const l=cs.model.lines.find(x=>x.id===tr.dataset.id); if(!l)return;
+    if(t.dataset.m){const n=parseNum(t.value);if(Number.isNaN(n)){alert('Please enter a number, for example 1234.56');t.value=l.v[t.dataset.m]??'';return;}cUpdate(()=>{if(n==null)delete l.v[t.dataset.m];else l.v[t.dataset.m]=n;});}
+    else if(t.dataset.f==='group'){const v=t.value.trim()||'Other';cUpdate(()=>{l.group=v;});}
+    else if(t.dataset.f==='name'){cUpdate(()=>{l.name=t.value.trim()||'Untitled';});}
+    else if(t.dataset.f==='kind'){cUpdate(()=>{l.kind=t.value;});}
+  });
+  ed.addEventListener('click',e=>{const b=e.target.closest('[data-del]');if(!b)return;const l=cs.model.lines.find(x=>x.id===b.dataset.del);if(l&&confirm(`Delete "${l.name}"?`))cUpdate(m=>{m.lines=m.lines.filter(x=>x.id!==l.id);});});
+  const add=kind=>cUpdate(m=>{const g=m.lines.length?m.lines[m.lines.length-1].group:'AI Foundry';
+    const i=m.lines.map(l=>l.group).lastIndexOf(g);m.lines.splice(i+1,0,{id:newId(),group:g,name:kind==='users'?'Logged on users':'New resource group',kind,v:{}});});
+  document.getElementById('cAddCost').onclick=()=>add('cost');
+  document.getElementById('cAddUsers').onclick=()=>add('users');
+  document.getElementById('cAddMonth').onclick=()=>cUpdate(m=>{const l=m.months[m.months.length-1];let [y,mm]=l.split('-').map(Number);mm++;if(mm>12){mm=1;y++;}m.months.push(`${y}-${String(mm).padStart(2,'0')}`);});
+  document.getElementById('cDelMonth').onclick=()=>{const m=cs.model,k=m.months[m.months.length-1];
+    if(m.months.length<=1)return;
+    if(m.lines.some(l=>l.v[k]!=null)&&!confirm(`${mLong(k)} has data. Remove it anyway?`))return;
+    cUpdate(m=>{m.months.pop();m.lines.forEach(l=>delete l.v[k]);delete m.mtd[k];delete m.forecast.manual[k];});};
+  document.getElementById('cMethod').onchange=e=>cUpdate(m=>{m.forecast.method=e.target.value;});
+  document.getElementById('cBudget').onchange=e=>{const n=parseNum(e.target.value);if(Number.isNaN(n)){e.target.value=cs.model.budget??'';return;}cUpdate(m=>{m.budget=n||null;});};
+  document.getElementById('cRevert').onclick=()=>{cs.model=clone(cs.saved);cs.remoteNewer=false;cRender();};
+  document.getElementById('cSave').onclick=cSave;
+  document.getElementById('cExportJson').onclick=()=>cDownload('DTO_Pioneers_cost_data.json',JSON.stringify(cs.model,null,2),'application/json');
+  document.getElementById('cExportCsv').onclick=()=>{const m=cs.model,q=s=>`"${String(s).replace(/"/g,'""')}"`;
+    const rows=[['Sandbox','Line','Type',...m.months.map(mLong)].map(q).join(',')];
+    m.lines.forEach(l=>rows.push([q(l.group),q(l.name),q(l.kind==='users'?'Users':'Cost (EUR)'),...m.months.map(k=>l.v[k]??'')].join(',')));
+    const a=analyse(m); rows.push([q('Total'),q('Monthly cost'),q('Cost (EUR)'),...m.months.map(k=>hasData(m,k)?a.tot(k).toFixed(2):'')].join(','));
+    cDownload('DTO_Pioneers_costs.csv',rows.join('\n'),'text/csv');};
+  document.getElementById('cImport').onclick=()=>document.getElementById('cFile').click();
+  document.getElementById('cFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+    try{const o=JSON.parse(await f.text());if(!validModel(o))throw 0;cs.model=o;cRender();alert('Data loaded. Check it, then select Save to keep it.');}
+    catch(_){alert('That file is not a cost data file exported from this dashboard.');}};
+}
+function validModel(o){return o&&Array.isArray(o.months)&&o.months.every(k=>/^\d{4}-\d{2}$/.test(k))&&Array.isArray(o.lines)&&o.lines.every(l=>l&&typeof l.group==='string'&&typeof l.name==='string'&&(l.kind==='cost'||l.kind==='users')&&l.v&&typeof l.v==='object')&&o.forecast&&o.mtd&&typeof o.mtd==='object';}
+async function cDownload(name,text,type){
+  if(cs.downloads){try{await cs.downloads.save({filename:name,data:text});}catch(e){if(e&&e.code!=='declined')alert('The file could not be saved here.');}return;}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
+}
+async function cSave(){
+  const btn=document.getElementById('cSave'); btn.disabled=true;
+  const data=clone(cs.model); data.updatedAt=new Date().toISOString();
+  if(cs.mode==='db'&&cs.ref){
+    try{await cs.ref.set(data);cs.saved=clone(data);cs.model=clone(data);cs.savedAt=data.updatedAt;cs.remoteNewer=false;}
+    catch(e){
+      if(e&&e.code==='invalid_argument'){cs.readOnly=true;alert('You have view-only access, so your changes could not be saved.');cs.model=clone(cs.saved);}
+      else if(e&&e.code==='unavailable'){setTimeout(()=>cSave(),800+Math.random()*700);return;}
+      else alert('Saving failed: '+(e&&e.message||'please try again.'));
+    }
+  }else{
+    try{localStorage.setItem(COST_KEY,JSON.stringify(data));cs.saved=clone(data);cs.model=clone(data);cs.savedAt=data.updatedAt;}
+    catch(_){alert('This browser does not allow saving. Use Export data file to keep your changes.');}
+  }
+  cRender();
+}
+function cInit(){
+  let local=null; try{const s=localStorage.getItem(COST_KEY);if(s){const o=JSON.parse(s);if(validModel(o))local=o;}}catch(_){}
+  cs.model=clone(local||COST_BASE); cs.saved=clone(cs.model); cs.savedAt=local?local.updatedAt:null;
+  cBind(); cRender();
+}
+/* tabs */
+function setTab(t){
+  document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));
+  document.getElementById('viewProg').hidden=t!=='prog';
+  document.getElementById('viewCost').hidden=t!=='cost';
+  document.querySelector('.ctl').style.visibility=t==='prog'?'visible':'hidden';
+}
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));
+cInit();
+</script>
+</body>
+</html>
