@@ -4,61 +4,514 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport"
-        content="width=device-width, initial-scale=1">
-  <title>Innovation Lab Dashboards</title>
+        content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+        content="Innovation Lab interactive technology and research dashboards">
+  <title>Innovation Lab | Technology & Research</title>
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f7fa;
-      margin: 0;
-      padding: 40px;
-      color: #202b3a;
+    :root {
+      --shell-red: #DD1D21;
+      --shell-yellow: #FFD500;
+      --ink: #202A35;
+      --muted: #657180;
+      --background: #F5F6F8;
+      --white: #FFFFFF;
+      --border: #E4E7EB;
     }
-    h1 { text-align: center; }
-    .grid {
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--background);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; }
+
+    .topline {
+      height: 6px;
+      background: linear-gradient(
+        90deg,
+        var(--shell-red) 0%,
+        var(--shell-red) 75%,
+        var(--shell-yellow) 75%,
+        var(--shell-yellow) 100%
+      );
+    }
+
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: auto;
+      padding: 22px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: var(--shell-red);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 25px;
+      font-weight: 800;
+    }
+
+    .brand-name {
+      font-size: 21px;
+      font-weight: 750;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .header-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--shell-red);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+    }
+
+    .hero {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-inner {
+      max-width: 1200px;
+      margin: auto;
+      padding: 72px 28px 76px;
+    }
+
+    .eyebrow {
+      color: var(--shell-red);
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      max-width: 850px;
+      font-size: clamp(38px, 5vw, 62px);
+      line-height: 1.12;
+      letter-spacing: -2px;
+      margin: 0 0 22px;
+      font-weight: 800;
+    }
+
+    h1 span { color: var(--shell-red); }
+
+    .hero-description {
+      max-width: 720px;
+      font-size: 18px;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .hero-accent {
+      display: flex;
+      margin-top: 34px;
+      height: 5px;
+      width: 120px;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .hero-accent div:first-child {
+      background: var(--shell-red);
+      flex: 3;
+    }
+
+    .hero-accent div:last-child {
+      background: var(--shell-yellow);
+      flex: 1;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: auto;
+      padding: 54px 28px 80px;
+    }
+
+    .section-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 20px;
+      margin-bottom: 26px;
+    }
+
+    h2 {
+      font-size: 27px;
+      letter-spacing: -0.7px;
+      margin: 0 0 5px;
+    }
+
+    .section-description {
+      color: var(--muted);
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .count {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .dashboard-grid {
       display: grid;
       grid-template-columns:
-        repeat(auto-fit, minmax(240px, 1fr));
-      gap: 20px;
-      max-width: 1000px;
-      margin: 40px auto;
+        repeat(3, minmax(0, 1fr));
+      gap: 22px;
     }
+
     .card {
-      background: white;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
       padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px #0001;
+      display: flex;
+      flex-direction: column;
+      min-height: 310px;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
     }
-    a {
-      color: #175cd3;
-      font-weight: bold;
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 14px 36px rgba(0,0,0,0.08);
+      border-color: #D0D5DC;
+    }
+
+    .card-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      font-size: 25px;
+      font-weight: 800;
+      margin-bottom: 24px;
+    }
+
+    .quantum .card-icon {
+      background: #FCE8E8;
+      color: var(--shell-red);
+    }
+
+    .science .card-icon {
+      background: #FFF5C7;
+      color: #7A5900;
+    }
+
+    .pioneers .card-icon {
+      background: #E9EFF7;
+      color: #345C8C;
+    }
+
+    .category {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--muted);
+      margin-bottom: 9px;
+    }
+
+    .card h3 {
+      font-size: 22px;
+      line-height: 1.3;
+      letter-spacing: -0.5px;
+      margin: 0 0 12px;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 14px;
+      margin: 0 0 25px;
+    }
+
+    .card-link {
+      margin-top: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      width: fit-content;
+      color: var(--shell-red);
+      font-size: 14px;
+      font-weight: 750;
+      text-decoration: none;
+    }
+
+    .card-link:hover {
+      text-decoration: underline;
+    }
+
+    .card-link:focus-visible {
+      outline: 3px solid var(--shell-red);
+      outline-offset: 4px;
+      border-radius: 3px;
+    }
+
+    .info-panel {
+      margin-top: 45px;
+      background: #FFF9DE;
+      border-left: 5px solid var(--shell-yellow);
+      border-radius: 8px;
+      padding: 20px 24px;
+    }
+
+    .info-panel strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+
+    .info-panel p {
+      margin: 0;
+      font-size: 13px;
+      color: #665A38;
+    }
+
+    footer {
+      background: var(--white);
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: auto;
+      padding: 24px 28px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 620px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header-label { display: none; }
+
+      .hero-inner {
+        padding: 48px 22px;
+      }
+
+      h1 { letter-spacing: -1px; }
+
+      main { padding: 40px 22px; }
+
+      .section-top {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .card { min-height: 260px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card { transition: none; }
     }
   </style>
 </head>
+
 <body>
-  <h1>Innovation Lab</h1>
-  <p style="text-align:center">
-    Interactive research and technology dashboards
-  </p>
+  <div class="topline"></div>
 
-  <div class="grid">
-    <div class="card">
-      <h2>Quantum Technology Landscape</h2>
-      <p>Explore the quantum technology ecosystem.</p>
-      <a href="quantum/">Open dashboard</a>
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">
+          S
+        </div>
+        <div>
+          <div class="brand-name">Innovation Lab</div>
+          <div class="brand-subtitle">
+            Technology, Science & Digital Innovation
+          </div>
+        </div>
+      </div>
+      <div class="header-label">
+        Explore. Experiment. Innovate.
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">
+        Innovation & Technology
+      </div>
+
+      <h1>
+        Ideas into insight.<br>
+        <span>Insight into impact.</span>
+      </h1>
+
+      <p class="hero-description">
+        Explore emerging technologies, scientific
+        research platforms and digital capability
+        initiatives through interactive dashboards
+        and technology landscapes.
+      </p>
+
+      <div class="hero-accent" aria-hidden="true">
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <div class="section-top">
+      <div>
+        <h2>Explore our dashboards</h2>
+        <p class="section-description">
+          Interactive insights across technology,
+          science and capability development.
+        </p>
+      </div>
+      <div class="count">3 dashboards</div>
     </div>
 
-    <div class="card">
-      <h2>AI-for-Science Market Scan</h2>
-      <p>Explore agentic scientific workbenches.</p>
-      <a href="ai-for-science/">Open dashboard</a>
+    <div class="dashboard-grid">
+
+      <!-- QUANTUM LANDSCAPE -->
+      <article class="card quantum">
+        <div class="card-icon" aria-hidden="true">
+          Q
+        </div>
+
+        <div class="category">
+          Emerging Technologies
+        </div>
+
+        <h3>Quantum Technology Landscape</h3>
+
+        <p>
+          Explore the global quantum ecosystem,
+          including computing, sensing, security,
+          networking, technology maturity and
+          industry applications.
+        </p>
+
+        <a class="card-link"
+           href="quantum/">
+          Explore landscape <span aria-hidden="true">→</span>
+        </a>
+      </article>
+
+      <!-- AI FOR SCIENCE -->
+      <article class="card science">
+        <div class="card-icon" aria-hidden="true">
+          AI
+        </div>
+
+        <div class="category">
+          Scientific Research
+        </div>
+
+        <h3>AI-for-Science Market Scan</h3>
+
+        <p>
+          Discover agentic scientific workbenches,
+          research platforms and AI capabilities
+          supporting evidence discovery, modelling,
+          simulation and scientific workflows.
+        </p>
+
+        <a class="card-link"
+           href="ai-for-science/">
+          Explore market scan <span aria-hidden="true">→</span>
+        </a>
+      </article>
+
+      <!-- DTO PIONEERS -->
+      <article class="card pioneers">
+        <div class="card-icon" aria-hidden="true">
+          D
+        </div>
+
+        <div class="category">
+          Digital Capability
+        </div>
+
+        <h3>DTO Pioneers Dashboard</h3>
+
+        <p>
+          Explore learning programme adoption,
+          AI Foundry and Databricks sandbox usage,
+          certification progress and capability
+          development metrics.
+        </p>
+
+        <a class="card-link"
+           href="dto-pioneers/">
+          Explore dashboard <span aria-hidden="true">→</span>
+        </a>
+      </article>
+
     </div>
 
-    <div class="card">
-      <h2>DTO Pioneers</h2>
-      <p>Explore programme adoption and learning.</p>
-      <a href="dto-pioneers/">Open dashboard</a>
+    <div class="info-panel">
+      <strong>Prototype environment</strong>
+      <p>
+        This website is a demonstration of interactive
+        research and innovation dashboards. It is not
+        an official Shell website. Do not publish
+        confidential, personal or restricted enterprise
+        information on this public hosting platform.
+      </p>
     </div>
-  </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>
+        Innovation Lab | Technology & Research
+      </span>
+      <span>
+        Shell-inspired visual design | Prototype
+      </span>
+    </div>
+  </footer>
 </body>
 </html>
